@@ -1,6 +1,7 @@
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class AddOutlineMeshes : MonoBehaviour {
     public Material objMat;
@@ -21,6 +22,10 @@ public class AddOutlineMeshes : MonoBehaviour {
             newObj.layer = 3;
             newRenderer.transform.SetLocalPositionAndRotation(Vector3.zero, quaternion.identity);
             newRenderer.transform.localScale = Vector3.one;
+            newRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            if (newRenderer.TryGetComponent(out Collider c)) {
+                Destroy(c);
+            }
         }
     }
 }
