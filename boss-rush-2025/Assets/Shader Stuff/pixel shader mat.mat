@@ -44,8 +44,8 @@ Material:
     - _Float: 0.84
     - _Pixelation: 400
     - _Sobel_Cutoff: 0.01
-    - _Sobel_Distance: 0.78
+    - _Sobel_Distance: 0.05
     m_Colors:
-    - _Edge_Color: {r: 0.1509434, g: 0.11906012, b: 0.09611962, a: 0.7921569}
+    - _Edge_Color: {r: 0.122641504, g: 0.07458169, b: 0.044544317, a: 0.7921569}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
