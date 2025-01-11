@@ -11,6 +11,21 @@ public class Movement : MonoBehaviour {
     public float damping = .1f;
     private Vector3 _vel;
     private Vector3 lastMoveDirection = Vector3.forward;
+
+    public Transform targetPositionTrans;
+    public Transform modelTrans;
+
+    public ParticleSystem groundEffectPS;
+    
+    // Hoping
+    [Header("Hopping")] 
+    [Range(0, 3)]
+    public float hopHeight = 1;
+    [Range(0, 20)]
+    public float hopTime = 3;
+
+    [Header("Leaning")] 
+    [Range(0, 10)] public float leanFactor = 1;
     
     // Input
     public InputActionReference moveAction;
@@ -43,25 +58,101 @@ public class Movement : MonoBehaviour {
         Vector3 input = new Vector3(inputV2.x, 0, inputV2.y);
         
         Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
-        Vector3 move = rotation * input;
+        Vector3 move = rotation * input * speed;
 
-        MoveTowards(transform.position + move);
+        targetPositionTrans.position = Vector3.SmoothDamp(targetPositionTrans.position, transform.position + move, ref _vel, damping);
+        
+        MoveTowards(targetPositionTrans.position);
+        LeanTowards(targetPositionTrans.position);
     }
+
+    public GameObject obj;
     
     private void MoveTowards(Vector3 hitpoint) {
-        Vector3 targetPos = Vector3.SmoothDamp(transform.position, hitpoint, ref _vel, damping, speed);
-        Vector3 towards = targetPos - playerCC.transform.position;
-    
+        var position = playerCC.transform.position;
+        Vector3 towards = hitpoint - position;
+
         // Update last movement direction if we're actually moving
-        if (towards.magnitude > 0.01f) {  // Small threshold to avoid jitter
+        float magnitude = towards.magnitude;
+        if (magnitude > 0.1f) {  // Small threshold to avoid jitter
             lastMoveDirection = towards.normalized;
             lastMoveDirection.y = 0;
         }
+        Hop(magnitude);
     
         // Rotate towards the last movement direction
         Quaternion targetRotation = Quaternion.LookRotation(lastMoveDirection);
         playerCC.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 20);
+        towards.y = -1;
     
-        playerCC.Move(towards);
+        playerCC.Move(towards * (speed * Time.deltaTime));
+    }
+
+    private void LeanTowards(Vector3 targetPos) {
+        Vector3 towards = targetPos - playerCC.transform.position;
+        towards.y = 0;
+        float magnitude = towards.magnitude;
+
+        Vector3 worldLean = Vector3.up + (towards * (magnitude * leanFactor));
+        worldLean.Normalize();
+
+        // Convert the world-space up vector to local space
+        Vector3 localUp = playerCC.transform.InverseTransformDirection(Vector3.up);
+        
+        // Convert the target world direction to local space
+        Vector3 localTargetDir = playerCC.transform.InverseTransformDirection(worldLean);
+        
+        // Calculate the rotation from localUp to localTargetDir
+        Quaternion localRotation = Quaternion.FromToRotation(localUp, localTargetDir);
+
+        modelTrans.localRotation = localRotation;
+    }
+
+    private float lastTimeHop = 0;
+    private bool hopping = false;
+    private float hopStop = -1;
+    private bool stopped = true;
+    private void Hop(float magnitude) {
+        float t = Time.time - lastTimeHop;
+        float tTimesHopTime = t * hopTime;
+        float newY = Mathf.Abs(Mathf.Sin(tTimesHopTime)) * hopHeight;
+        if (magnitude < .3f) {
+            if (hopping) {
+                hopStop = FindNextInterval(t, Mathf.PI / hopTime);
+                hopping = false;
+            }
+            
+            if (t < hopStop && !stopped) {
+                modelTrans.localPosition = Vector3.up * newY;
+            }
+            else {
+                stopped = true;
+                lastTimeHop = Time.time;
+                groundEffectPS.Stop();
+            }
+            return;
+        }
+
+        if (stopped) {
+            groundEffectPS.Play();
+        }
+
+        hopping = true;
+        stopped = false;
+        modelTrans.localPosition = Vector3.up * newY;
+    }
+    
+    private float FindNextInterval(float number, float interval)
+    {
+        float intervals = (float)Math.Ceiling(number / interval);
+        float nextInterval = intervals * interval;
+        
+        // If the calculated interval equals the input number,
+        // move to the next interval
+        if (Math.Abs(nextInterval - number) < .01f) {
+            return number;
+        }
+        
+        return nextInterval;
     }
 }

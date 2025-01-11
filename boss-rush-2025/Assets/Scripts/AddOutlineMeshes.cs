@@ -15,6 +15,10 @@ public class AddOutlineMeshes : MonoBehaviour {
 
         foreach (var renderer in allRenderers) {
             if(renderer.GetComponent<TextMeshPro>()) continue;
+            if (renderer.gameObject.layer == 10) {
+                renderer.enabled = false;
+                continue;
+            }
             
             var newObj = Instantiate(renderer.gameObject, renderer.transform);
             var newRenderer = newObj.GetComponent<MeshRenderer>();
