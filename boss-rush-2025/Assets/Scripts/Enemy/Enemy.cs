@@ -2,7 +2,7 @@ using DG.Tweening;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamagable {
-    public bool CanKnockBack = true;
+    public float knockBackFactor = 1.0f;
     public CharacterController cc;
 
     protected bool knockedBack = false;
@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour, IDamagable {
             DOTween.To(() => x, (y) => {
                 var dV = y - cc.transform.position;
                 cc.Move(dV);
-            }, knockbackTarget, .3f).SetEase(Ease.OutQuad);
+            }, knockbackTarget, .3f * knockBackFactor).SetEase(Ease.OutQuad);
         }
         else {
             Move();
@@ -33,13 +33,15 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     
     public void TakeDamage(float damage, Transform source) {
-        knockedBack = true;
-        Vector3 direction = cc.transform.position - source.position;
-        direction.y = 0;
-        direction.Normalize();
+        if (knockBackFactor != 0.0) {
+            knockedBack = true;
+            Vector3 direction = cc.transform.position - source.position;
+            direction.y = 0;
+            direction.Normalize();
         
-        knockbackTarget = CalcKnockback(damage) * direction + cc.transform.position;
-        TextPopups.Instance.Get().PopupAbove(damage.ToString(), Vector3.Lerp(cc.transform.position, knockbackTarget, .5f), .5f);
+            knockbackTarget = knockBackFactor * CalcKnockback(damage) * direction + cc.transform.position;
+            TextPopups.Instance.Get().PopupAbove(damage.ToString(), Vector3.Lerp(cc.transform.position, knockbackTarget, .5f), .5f);
+        }
     }
 
     private float CalcKnockback(float damage) {

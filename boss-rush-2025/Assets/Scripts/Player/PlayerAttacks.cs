@@ -86,7 +86,7 @@ public class PlayerAttacks : MonoBehaviour {
         Movement.ForceToFaceInputDirection();
 
         var newDamageInstance = Instantiate(damageInstancePrefab);
-        newDamageInstance.Setup(10, trail.transform, Movement.transform, swingTime);
+        newDamageInstance.Setup(10, trail.transform, Movement.transform, swingTime+ .05f);
         
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
@@ -125,7 +125,7 @@ public class PlayerAttacks : MonoBehaviour {
         Movement.ForceToFaceInputDirection();
         
         var newDamageInstance = Instantiate(damageInstancePrefab);
-        newDamageInstance.Setup(15, trail.transform, Movement.transform, swingTime);
+        newDamageInstance.Setup(15, trail.transform, Movement.transform, swingTime + .05f);
 
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
@@ -166,7 +166,7 @@ public class PlayerAttacks : MonoBehaviour {
         Movement.ForceToFaceInputDirection();
         
         var newDamageInstance = Instantiate(damageInstancePrefab);
-        newDamageInstance.Setup(20, trail.transform, Movement.transform, thirdAttackSwingTime);
+        newDamageInstance.Setup(20, trail.transform, Movement.transform, thirdAttackSwingTime+ .05f);
 
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
