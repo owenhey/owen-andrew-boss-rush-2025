@@ -61,6 +61,17 @@ public class Movement : MonoBehaviour {
     private void OnDisable() {
         rollAction.action.started -= Roll;
     }
+
+    public void ForceToFaceInputDirection() {
+        Vector2 inputV2 = moveAction.action.ReadValue<Vector2>();
+        if (inputV2 == Vector2.zero) return;
+        
+        Vector3 input = new Vector3(inputV2.x, 0, inputV2.y);
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
+        Vector3 direction = rotation * input;
+        direction.y = 0;
+        playerCC.transform.LookAt(playerCC.transform.position + direction);
+    }
     
     private void Roll(InputAction.CallbackContext obj) {
         if (Attacking) return;
@@ -76,7 +87,7 @@ public class Movement : MonoBehaviour {
             Vector3 input = new Vector3(inputV2.x, 0, inputV2.y);
             Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
             direction = rotation * input;
-            playerCC.transform.LookAt(playerCC.transform.position + direction);
+            ForceToFaceInputDirection();
         }
         else {
             direction = lastMoveDirection;

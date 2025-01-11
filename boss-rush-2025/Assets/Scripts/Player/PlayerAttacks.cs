@@ -37,6 +37,8 @@ public class PlayerAttacks : MonoBehaviour {
     [ColorUsage(true, true)]
     public Color thirdStrikeColor = Color.white;
 
+    public DamageInstance damageInstancePrefab;
+
     private enum StrikePhase {
         none,
         first,
@@ -81,6 +83,10 @@ public class PlayerAttacks : MonoBehaviour {
         nextPhase = StrikePhase.second;
         midSwing = true;
         trailMat.color = firstStrikeColor;
+        Movement.ForceToFaceInputDirection();
+
+        var newDamageInstance = Instantiate(damageInstancePrefab);
+        newDamageInstance.Setup(10, trail.transform, Movement.transform, swingTime);
         
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
@@ -116,6 +122,10 @@ public class PlayerAttacks : MonoBehaviour {
         midSwing = true;
 
         trailMat.color = secondStrikeColor;
+        Movement.ForceToFaceInputDirection();
+        
+        var newDamageInstance = Instantiate(damageInstancePrefab);
+        newDamageInstance.Setup(15, trail.transform, Movement.transform, swingTime);
 
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
@@ -153,6 +163,10 @@ public class PlayerAttacks : MonoBehaviour {
         midSwing = true;
 
         trailMat.color = thirdStrikeColor;
+        Movement.ForceToFaceInputDirection();
+        
+        var newDamageInstance = Instantiate(damageInstancePrefab);
+        newDamageInstance.Setup(20, trail.transform, Movement.transform, thirdAttackSwingTime);
 
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
