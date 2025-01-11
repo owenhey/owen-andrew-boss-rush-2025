@@ -31,6 +31,16 @@ public class Movement : MonoBehaviour {
 
     [Header("Leaning")] 
     [Range(0, 10)] public float leanFactor = 1;
+
+    [Header("rolling")] [Range(0, 10)] public float rollDistance = .5f;
+    [Range(0, 2)] public float rollTime = .5f;
+    [Range(0, 1)] public float rollCooldown = .5f;
+
+    private float nextRollAllowed = -1;
+    private Vector3 rollTarget;
+    private Vector3 rollStart;
+    private float rollEndTime;
+    private float rollStartTime;
     
     // Input
     public InputActionReference moveAction;
@@ -39,7 +49,10 @@ public class Movement : MonoBehaviour {
     private Vector3 camForwardNoZ;
 
     public bool Attacking = false;
-    
+
+    private bool rolling = false;
+
+    public Transform rollCenter;
 
     private void OnEnable() {
         rollAction.action.started += Roll;
@@ -50,14 +63,70 @@ public class Movement : MonoBehaviour {
     }
     
     private void Roll(InputAction.CallbackContext obj) {
-        TextPopups.Instance.Get().PopupAbove("Roll!", transform, 1.0f);
+        if (Attacking) return;
+        if (rolling) return;
+        if (Time.time < nextRollAllowed) return;
+        
+        var playerPos = playerCC.transform.position;
+
+        Vector3 direction;
+        
+        Vector2 inputV2 = moveAction.action.ReadValue<Vector2>();
+        if (inputV2 != Vector2.zero) {
+            Vector3 input = new Vector3(inputV2.x, 0, inputV2.y);
+            Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
+            direction = rotation * input;
+            playerCC.transform.LookAt(playerCC.transform.position + direction);
+        }
+        else {
+            direction = lastMoveDirection;
+        }
+        direction.Normalize();
+        rolling = true;
+        
+        TextPopups.Instance.Get().PopupAbove("Roll!", transform.position, .25f);
+        
+        rollTarget = playerPos + direction * rollDistance;
+        rollStart = playerPos;
+        rollStartTime = Time.time;
+        rollEndTime = Time.time + rollTime;
+        nextRollAllowed = Time.time + rollTime + rollCooldown;
+
+        targetPositionTrans.position = rollTarget + direction;
     }
 
     void Update() {
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
+
+        if (rolling) {
+            RollTowards();
+        }
+        else {
+            Move();
+        }
+    }
+
+    private void RollTowards() {
+        if (Time.time > rollEndTime) {
+            rolling = false;
+            rollCenter.localEulerAngles = Vector3.zero;
+            rollCenter.localScale = Vector3.one;
+            return;
+        }
+
+        float t = (Time.time - rollStartTime) / rollTime;
+        t = 1 - Mathf.Pow(1 - (.5f * t), 3);
+        t *= 1.144f;
+
+        float scale = 2 * (t - .5f) * (t - .5f) + .5f;
+        rollCenter.localScale = Vector3.one * Mathf.Sqrt(scale);
         
-        Move();
+        Vector3 desired = Vector3.Lerp(rollStart, rollTarget, t);
+        Vector3 direction = desired - playerCC.transform.position;
+        direction.y = -1;
+        playerCC.Move(direction);
+        rollCenter.localEulerAngles = new Vector3(Mathf.Lerp(0, 360, t), 0, 0);
     }
 
     private void Move() {

@@ -74,6 +74,8 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
     private void FirstAttack() {
+        TextPopups.Instance.Get().PopupAbove("First!", transform.position, .25f);
+
         Movement.Attacking = true;
         currentAttack = StrikePhase.first;
         nextPhase = StrikePhase.second;
@@ -106,6 +108,8 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
     private void SecondAttack() {
+        TextPopups.Instance.Get().PopupAbove("Second!", transform.position, .25f);
+        
         Movement.Attacking = true;
         currentAttack = StrikePhase.second;
         nextPhase = StrikePhase.third;
@@ -141,6 +145,8 @@ public class PlayerAttacks : MonoBehaviour {
     }
     
     private void ThirdAttack() {
+        TextPopups.Instance.Get().PopupAbove("Third!", transform.position, .25f);
+        
         Movement.Attacking = true;
         currentAttack = StrikePhase.third;
         nextPhase = StrikePhase.second;
@@ -155,12 +161,12 @@ public class PlayerAttacks : MonoBehaviour {
             if(currentAttack == StrikePhase.third)
                 flailForwardRotation.DOLocalRotate(Vector3.zero, swingTime * .2f).SetDelay(thirdAttackSwingTime);
         });
-        flailRotation.DOLocalRotate(new Vector3(0, -180, 0), thirdAttackSwingTime * .35f).SetDelay(thirdAttackSwingTime * .1f).SetEase(Ease.InQuad).OnStart(
+        flailRotation.DOLocalRotate(new Vector3(0, -170, 0), thirdAttackSwingTime * .33f).SetDelay(thirdAttackSwingTime * .1f).SetEase(Ease.InQuad).OnStart(
             () => {
                 trail.emitting = true;
             }).OnComplete((() => {
-            flailRotation.DOLocalRotate(new Vector3(0, 0, 0), thirdAttackSwingTime * .35f).SetEase(Ease.Linear).OnComplete(() => {
-                flailRotation.DOLocalRotate(new Vector3(0, -150, 0), thirdAttackSwingTime * .3f).SetEase(Ease.OutQuad)
+            flailRotation.DOLocalRotate(new Vector3(0, -340, 0), thirdAttackSwingTime * .33f).SetEase(Ease.Linear).OnComplete(() => {
+                flailRotation.DOLocalRotate(new Vector3(0, -150, 0), thirdAttackSwingTime * .33f).SetEase(Ease.OutQuad)
                     .OnComplete(() => {
                         Movement.Attacking = false;
                         trail.emitting = false;
