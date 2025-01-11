@@ -15,6 +15,8 @@ public class Movement : MonoBehaviour {
 
     public Transform targetPositionTrans;
     public Transform modelTrans;
+    public Transform leg1transform;
+    public Transform leg2transform;
 
     public ParticleSystem groundEffectPS;
     
@@ -24,6 +26,8 @@ public class Movement : MonoBehaviour {
     public float hopHeight = 1;
     [Range(0, 20)]
     public float hopTime = 3;
+    [Range(0, 20)]
+    public float legTime = 5;
 
     [Header("Leaning")] 
     [Range(0, 10)] public float leanFactor = 1;
@@ -125,6 +129,9 @@ public class Movement : MonoBehaviour {
         float tTimesHopTime = t * hopTime;
         float newY = Mathf.Abs(Mathf.Sin(tTimesHopTime)) * hopHeight;
         if (magnitude < .3f) {
+            leg1transform.localEulerAngles = Vector3.zero;
+            leg2transform.localEulerAngles = Vector3.zero;
+            
             if (hopping) {
                 hopStop = FindNextInterval(t, Mathf.PI / hopTime);
                 hopping = false;
@@ -148,6 +155,9 @@ public class Movement : MonoBehaviour {
         hopping = true;
         stopped = false;
         modelTrans.localPosition = Vector3.up * newY;
+
+        leg1transform.localEulerAngles = new Vector3(0, 0, Mathf.Sin(t * legTime) * 20);
+        leg2transform.localEulerAngles = new Vector3(0, 0, Mathf.Sin(t * legTime) * -20);
     }
     
     private float FindNextInterval(float number, float interval)
