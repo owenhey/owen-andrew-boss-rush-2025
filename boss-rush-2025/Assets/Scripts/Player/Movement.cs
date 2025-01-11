@@ -43,13 +43,13 @@ public class Movement : MonoBehaviour {
     }
     
     private void Roll(InputAction.CallbackContext obj) {
-        Debug.Log("Roll");
+        TextPopups.Instance.Get().PopupAbove("Roll!", transform, 1.0f);
     }
 
     void Update() {
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
-
+        
         Move();
     }
 

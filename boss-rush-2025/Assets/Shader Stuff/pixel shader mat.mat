@@ -41,9 +41,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Float: 0.84
-    - _Pixelation: 400
-    - _Sobel_Cutoff: 0.01
+    - _Float: -13.8
+    - _Pixelation: 350
+    - _Sobel_Cutoff: 0.001
     - _Sobel_Distance: 0.05
     m_Colors:
     - _Edge_Color: {r: 0.122641504, g: 0.07458169, b: 0.044544317, a: 0.7921569}
