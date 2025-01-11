@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour {
     public float damping = .1f;
     private Vector3 _vel;
     private Vector3 lastMoveDirection = Vector3.forward;
+    public Vector3 LastMoveDirection => lastMoveDirection;
 
     public Transform targetPositionTrans;
     public Transform modelTrans;
@@ -32,6 +33,8 @@ public class Movement : MonoBehaviour {
     public InputActionReference rollAction;
 
     private Vector3 camForwardNoZ;
+
+    public bool Attacking = false;
     
 
     private void OnEnable() {
@@ -56,6 +59,11 @@ public class Movement : MonoBehaviour {
     private void Move() {
         Vector2 inputV2 = moveAction.action.ReadValue<Vector2>();
         Vector3 input = new Vector3(inputV2.x, 0, inputV2.y);
+
+        bool stopInput = Attacking;
+        if (stopInput) {
+            input = Vector3.zero;
+        }
         
         Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
         Vector3 move = rotation * input * speed;
