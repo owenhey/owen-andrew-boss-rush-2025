@@ -19,6 +19,9 @@ public class AddOutlineMeshes : MonoBehaviour {
                 renderer.enabled = false;
                 continue;
             }
+            if (renderer.gameObject.layer == 11) {
+                continue;
+            }
             
             var newObj = Instantiate(renderer.gameObject, renderer.transform);
             var newRenderer = newObj.GetComponent<MeshRenderer>();
@@ -32,6 +35,9 @@ public class AddOutlineMeshes : MonoBehaviour {
             }
             if (newRenderer.TryGetComponent(out SinBob s)) {
                 Destroy(s);
+            }
+            if (newRenderer.TryGetComponent(out RotateUponAwake r)) {
+                Destroy(r);
             }
         }
     }

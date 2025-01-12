@@ -49,6 +49,7 @@ public class Movement : MonoBehaviour {
     private Vector3 camForwardNoZ;
 
     public bool Attacking = false;
+    public bool Cutscened = false;
 
     private bool rolling = false;
 
@@ -80,6 +81,8 @@ public class Movement : MonoBehaviour {
     private void Roll(InputAction.CallbackContext obj) {
         if (Attacking) return;
         if (rolling) return;
+        if (Cutscened) return;
+        
         if (Time.time < nextRollAllowed) return;
         
         var playerPos = playerCC.transform.position;
@@ -114,6 +117,7 @@ public class Movement : MonoBehaviour {
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
 
+        if (Cutscened) return;
         if (rolling) {
             RollTowards();
         }
