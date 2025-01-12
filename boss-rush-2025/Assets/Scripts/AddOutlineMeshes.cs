@@ -30,6 +30,9 @@ public class AddOutlineMeshes : MonoBehaviour {
             if (newRenderer.TryGetComponent(out Collider c)) {
                 Destroy(c);
             }
+            if (newRenderer.TryGetComponent(out SinBob s)) {
+                Destroy(s);
+            }
         }
     }
 }

@@ -54,6 +54,10 @@ public class Movement : MonoBehaviour {
 
     public Transform rollCenter;
 
+    private void Awake() {
+        targetPositionTrans.parent = null;
+    }
+
     private void OnEnable() {
         rollAction.action.started += Roll;
     }
