@@ -4,7 +4,9 @@ public class TrainingDummy : Enemy {
     public float radiusAllowed = 5;
     private Vector3 startPos;
 
-    private void Awake() {
+    protected override void Awake()
+    {
+        base.Awake(); 
         startPos = transform.position;
     }
     protected override void OnUpdate() {

@@ -99,5 +99,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 859ad8d38a1482f4db636ff1082032a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: {x: 0, y: 0.1, z: 0}
+  amplitude: {x: 0, y: 0.15, z: 0}
   speed: 2

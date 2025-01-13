@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class DamageInstance : MonoBehaviour {
     public LayerMask damageLayerMask;
     public float damage;
 
+    public bool IsFromPlayer;
     public Transform Source;
 
     public Transform followTarget;
     
     private List<IDamagable> hitObjects = new();
+
+    private bool playerBriefStoppedThisAttack = false;
 
     public void LateUpdate() {
         if (followTarget) {
@@ -20,8 +24,8 @@ public class DamageInstance : MonoBehaviour {
 
     public void Reset() {
         hitObjects.Clear();
-        Source = null;
         followTarget = null;
+        playerBriefStoppedThisAttack = false;
     }
 
 
@@ -40,6 +44,13 @@ public class DamageInstance : MonoBehaviour {
                     return;
                 }
                 hitObjects.Add(damagable);
+
+                if (IsFromPlayer) {
+                    if (!playerBriefStoppedThisAttack) {
+                        playerBriefStoppedThisAttack = true;
+                        PlayerAttacks.BriefPause();
+                    }
+                }
                 
                 
                 damagable.TakeDamage(damage, Source != null ? Source : transform);

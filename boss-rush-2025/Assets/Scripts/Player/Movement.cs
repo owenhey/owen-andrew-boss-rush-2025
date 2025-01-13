@@ -82,7 +82,8 @@ public class Movement : MonoBehaviour {
         if (Attacking) return;
         if (rolling) return;
         if (Cutscened) return;
-        
+
+        gameObject.layer = 8; // No hit layer
         if (Time.time < nextRollAllowed) return;
         
         var playerPos = playerCC.transform.position;
@@ -113,16 +114,56 @@ public class Movement : MonoBehaviour {
         targetPositionTrans.position = rollTarget + direction;
     }
 
+    private bool gettingKnocked = false;
+    private Vector3 knockPoint;
+    public float knockbackForce;
+    public float knockDuration = .25f;
+    private float knockEnd = -1;
+    private float knockStart;
+    private Vector3 knockStartPoint;
+    
+    public void Knockback(Transform source) {
+        Debug.Log("Knocing back");
+        TextPopups.Instance.Get().PopupAbove("Ouch!", transform, .5f);
+        gettingKnocked = true;
+        
+        Vector3 towards = transform.position - source.position;
+        towards.y = 0;
+        towards.Normalize();
+
+        knockEnd = Time.time + knockDuration;
+
+        knockStart = Time.time;
+
+        knockStartPoint = transform.position;
+        knockPoint = transform.position + (knockbackForce * towards);
+        targetPositionTrans.position = knockPoint;
+    }
+
     void Update() {
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
 
         if (Cutscened) return;
-        if (rolling) {
-            RollTowards();
+        if (gettingKnocked) {
+            if (Time.time > knockEnd) {
+                gettingKnocked = false;
+            }
+            
+            float t = (Time.time - knockStart) / knockDuration;
+            t = Mathf.Sin((t * Mathf.PI) / 2);
+            Vector3 target = Vector3.Lerp(knockStartPoint, knockPoint, t);
+            Vector3 towardsKnockPoint = target - playerCC.transform.position;
+            towardsKnockPoint.y = 0;
+            playerCC.Move(towardsKnockPoint);
         }
         else {
-            Move();
+            if (rolling) {
+                RollTowards();
+            }
+            else {
+                Move();
+            }
         }
     }
 
@@ -131,6 +172,7 @@ public class Movement : MonoBehaviour {
             rolling = false;
             rollCenter.localEulerAngles = Vector3.zero;
             rollCenter.localScale = Vector3.one;
+            gameObject.layer = 7; // back to regular layer
             return;
         }
 
