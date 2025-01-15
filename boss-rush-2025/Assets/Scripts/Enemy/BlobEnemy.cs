@@ -1,6 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BlobEnemy : Enemy {
     private enum BlobAttack {
@@ -25,10 +28,19 @@ public class BlobEnemy : Enemy {
     public float basicAttackTime = .1f;
     public float basicAttackDelay = .5f;
 
+    [Header("blobs")] 
+    public BlobSmallEnemy blobPrefab;
+
+    public Transform centerTarget;
+    
+    public GameObject bossCam;
+
     private BlobAttack nextAttack;
     private float nextAttackTime = 3;
 
     private bool attacking = false;
+
+    public List<BlobSmallEnemy> spawnedBlobs;
 
     protected override void Awake() {
         base.Awake();
@@ -42,6 +54,7 @@ public class BlobEnemy : Enemy {
                 if (shouldNextAttack) {
                     nextAttackTime = Time.time + attackCooldown;
                     StartCoroutine(BasicC());
+                    SpawnBlob();
                 }
             }
             else {
@@ -58,7 +71,6 @@ public class BlobEnemy : Enemy {
 
             Vector3 towardsPlayer = player.transform.position - transform.position;
             towardsPlayer.y = 0;
-            Debug.Log("current distance: " + towardsPlayer.magnitude);
             if (towardsPlayer.magnitude > distanceAway) {
                 targetPosition = transform.position + (towardsPlayer.normalized * speed);
             }
@@ -68,9 +80,25 @@ public class BlobEnemy : Enemy {
         }
     }
 
+    protected override void Die() {
+        base.Die();
+        bossCam.gameObject.SetActive(false);
+
+        foreach (var blob in spawnedBlobs) {
+            if (blob != null) {
+                Destroy(blob);
+            }
+        }
+    }
+
     protected override void HandleCombatStart() {
         base.HandleCombatStart();
         nextAttackTime = Time.time + attackCooldown;
+        bossCam.gameObject.SetActive(true);
+        
+        Invoke(nameof(SpawnBlob), .25f);
+        Invoke(nameof(SpawnBlob), .66f);
+        Invoke(nameof(SpawnBlob), .8f);
     }
 
     private void LookAt(Vector3 target) {
@@ -96,5 +124,17 @@ public class BlobEnemy : Enemy {
         });
         yield return new WaitForSeconds(basicAttackTime + .15f);
         attacking = false;
+    }
+
+    public void SpawnBlob() {
+        Vector2 onUnitCircle = Random.insideUnitCircle.normalized;
+        Vector3 spawnLocation = new Vector3(onUnitCircle.x, 0, onUnitCircle.y) * 15 + // on the edge
+                                centerTarget.position + // Move it to the middle
+                                Vector3.down * 2; // Down a little so it's in the lava
+        
+        var newBlob = Instantiate(blobPrefab, spawnLocation, quaternion.identity);
+        spawnedBlobs.Add(newBlob);
+        newBlob.centerTarget = centerTarget;
+        newBlob.parentBlob = this;
     }
 }

@@ -1,8 +1,11 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamagable {
+    public string EnemyName;
     public float knockBackFactor = 1.0f;
+    protected float knockbackFactorCode = 1.0f;
     public CharacterController cc;
 
     private Vector3 knockbackTarget;
@@ -15,15 +18,26 @@ public class Enemy : MonoBehaviour, IDamagable {
     protected bool ShouldMove = true;
 
     [Header("Stats")] 
+    public float maxHealth = 35;
     public float speed;
     public float damping;
     private Vector3 vel;
+
+    [Header("boss health bar")] 
+    public bool useBossHealthBar;
+
+    private float currentHealth = 100;
+    public float CurrentHealth => currentHealth;
 
     protected Movement player;
 
     [Header("Flavor")] [SerializeField] 
     [TextArea(3, 3)] private string combatStartText;
     [TextArea(3, 3)] private string playerStartCombatText;
+    public Color hitColor = Color.white;
+
+    public Action<float, float> OnChangeHealth;
+    public Action OnDie;
 
     private Tween currentKnockback;
 
@@ -31,6 +45,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         transformTarget.parent = null;
         player = FindFirstObjectByType<Movement>();
         targetPosition = cc.transform.position;
+        currentHealth = maxHealth;
     }
 
     private void Update() {
@@ -58,11 +73,16 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     
     public virtual void TakeDamage(float damage, Transform source) {
-        if (knockBackFactor != 0.0) {
+        if (knockBackFactor * knockbackFactorCode != 0.0) {
             knockedBack = true;
             Vector3 direction = cc.transform.position - source.position;
             direction.y = 0;
             direction.Normalize();
+
+            var inBetween = (source.transform.position + transform.position) * .5f;
+            inBetween += Vector3.up;
+            
+            SplatManager.Instance.Get().Setup(inBetween, hitColor);
 
             if (!InCombat) {
                 InCombat = true;
@@ -71,15 +91,35 @@ public class Enemy : MonoBehaviour, IDamagable {
                 HandleCombatStart();
             }
         
-            knockbackTarget = knockBackFactor * CalcKnockback(damage) * direction + cc.transform.position;
+            knockbackTarget = knockbackFactorCode * knockBackFactor * CalcKnockback(damage) * direction + cc.transform.position;
             TextPopups.Instance.Get().PopupAbove(damage.ToString(), Vector3.Lerp(cc.transform.position, knockbackTarget, .5f), .5f);
             
             Knockback();
         }
+
+        currentHealth -= damage;
+        OnChangeHealth?.Invoke(-damage, currentHealth);
+        if (currentHealth <= 0) {
+            Die();
+        }
+    }
+
+    public void Kill() {
+        currentHealth = 0;
+        OnChangeHealth(-100000, 0);
+        Die();
+    }
+
+    protected virtual void Die() {
+        Destroy(transformTarget.gameObject);
+        Destroy(gameObject);
+        OnDie?.Invoke();
     }
 
     protected virtual void HandleCombatStart() {
-        
+        if (useBossHealthBar) {
+            BossHealthBar.instance.Setup(this);
+        }
     }
 
     private void Knockback() {

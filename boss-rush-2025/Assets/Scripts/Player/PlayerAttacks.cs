@@ -56,7 +56,7 @@ public class PlayerAttacks : MonoBehaviour {
 
     private StrikePhase nextPhase = StrikePhase.first;
     private StrikePhase currentAttack = StrikePhase.none;
-    private bool midSwing = false;
+    public bool midSwing = false;
 
     private void Awake() {
         trail.emitting = false;
@@ -71,12 +71,11 @@ public class PlayerAttacks : MonoBehaviour {
         attackAction.action.started -= Attack;
     }
 
-    public static void BriefPause() {
-        instance.StartCoroutine(instance.briefPauseC());
+    public static void BriefPause(float pauseDuration) {
+        instance.StartCoroutine(instance.briefPauseC(pauseDuration));
     }
 
-    private IEnumerator briefPauseC() {
-        DOTween.Pause(TWEEN_ID);
+    private IEnumerator briefPauseC(float pauseDuration) {
         Color c;
         if (currentAttack == StrikePhase.first) {
             c = firstStrikeColor;
@@ -88,7 +87,11 @@ public class PlayerAttacks : MonoBehaviour {
             c = thirdStrikeColor;
         }
         SplatManager.Instance.Get().Setup(trail.transform.position, c);
-        yield return new WaitForSeconds(swingHitTime);
+
+        if (pauseDuration == 0) yield break;
+        
+        DOTween.Pause(TWEEN_ID);
+        yield return new WaitForSeconds(pauseDuration);
         DOTween.Play(TWEEN_ID);
     }
     
@@ -111,10 +114,12 @@ public class PlayerAttacks : MonoBehaviour {
         nextPhase = StrikePhase.second;
         midSwing = true;
         trailMat.color = firstStrikeColor;
-        Movement.ForceToFaceInputDirection();
+        Movement.ForceToFaceInputOrMouse();
 
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
+
+        GameObject damageInstance = null;
         
         flailForwardRotation.DOLocalRotate(new Vector3(swingAngle, 0, 0), swingTime * .2f).SetId(TWEEN_ID).From(Vector3.zero).OnComplete(() => {
             
@@ -124,9 +129,14 @@ public class PlayerAttacks : MonoBehaviour {
         flailRotation.DOLocalRotate(new Vector3(0, -179, 0), swingTime).SetId(TWEEN_ID).From(Vector3.zero).SetDelay(swingTime * .2f).SetEase(Ease.InQuad).OnStart(() => {
                 trail.emitting = true;
                 var newDamageInstance = Instantiate(damageInstancePrefab);
-                newDamageInstance.Setup(10, trail.transform, Movement.transform, swingTime+ .05f);
+                newDamageInstance.Setup(10, trail.transform, Movement.transform, 100);
+                damageInstance = newDamageInstance.gameObject;
                 flail.flailSpeed = 0;
         }).OnComplete((() => {
+            if (damageInstance) {
+                Destroy(damageInstance);
+            }
+            
             midSwing = false;
             if (currentAttack == StrikePhase.first) {
                 Movement.Attacking = false;
@@ -147,9 +157,11 @@ public class PlayerAttacks : MonoBehaviour {
         currentAttack = StrikePhase.second;
         nextPhase = StrikePhase.third;
         midSwing = true;
+        
+        GameObject damageInstance = null;
 
         trailMat.color = secondStrikeColor;
-        Movement.ForceToFaceInputDirection();
+        Movement.ForceToFaceInputOrMouse();
         
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
@@ -162,14 +174,21 @@ public class PlayerAttacks : MonoBehaviour {
             () => {
                 trail.emitting = true;
                 var newDamageInstance = Instantiate(damageInstancePrefab);
-                newDamageInstance.Setup(10, trail.transform, Movement.transform, swingTime+ .05f);
+                newDamageInstance.Setup(15, trail.transform, Movement.transform, 100);
+                damageInstance = newDamageInstance.gameObject;
                 flail.flailSpeed = 0;
+                
             }).OnComplete((() => {
             midSwing = false;
             if (currentAttack == StrikePhase.second) {
                 Movement.Attacking = false;
                 trail.emitting = false;
                 flail.flailSpeed = 700;
+                
+                if (damageInstance) {
+                    Destroy(damageInstance);
+                }
+                
                 nextPhase = StrikePhase.third;
                 // Do a delay, if they don't attack again, then go back to phase 1
                 flailRotation.DOLocalRotate(new Vector3(0, 0, 0), returnDelay).OnComplete(() => {
@@ -189,10 +208,12 @@ public class PlayerAttacks : MonoBehaviour {
         midSwing = true;
 
         trailMat.color = thirdStrikeColor;
-        Movement.ForceToFaceInputDirection();
+        Movement.ForceToFaceInputOrMouse();
         
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
+
+        GameObject damageInstance = null;
         
         flailForwardRotation.DOLocalRotate(new Vector3(swingAngle, 0, 0), swingTime * .2f).OnComplete(() => {
             if(currentAttack == StrikePhase.third)
@@ -202,7 +223,9 @@ public class PlayerAttacks : MonoBehaviour {
             () => {
                 trail.emitting = true;
                 var newDamageInstance = Instantiate(damageInstancePrefab);
-                newDamageInstance.Setup(10, trail.transform, Movement.transform, swingTime+ .05f);
+                newDamageInstance.Setup(20, trail.transform, Movement.transform, 100);
+                newDamageInstance.AffectSize(1.5f);
+                damageInstance = newDamageInstance.gameObject;
                 flail.flailSpeed = 0;
             }).OnComplete((() => {
             flailRotation.DOLocalRotate(new Vector3(0, -340, 0), thirdAttackSwingTime * .33f).SetId(TWEEN_ID).SetEase(Ease.Linear).OnComplete(() => {
@@ -211,6 +234,10 @@ public class PlayerAttacks : MonoBehaviour {
                         Movement.Attacking = false;
                         trail.emitting = false;
                         flail.flailSpeed = 700;
+                        
+                        if (damageInstance) {
+                            Destroy(damageInstance);
+                        }
 
                         flailRotation.DOLocalRotate(new Vector3(0, 0, 0), thirdAttackRestTime).OnComplete(() => {
                             currentAttack = StrikePhase.none;

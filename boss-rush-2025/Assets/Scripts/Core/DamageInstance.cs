@@ -36,6 +36,12 @@ public class DamageInstance : MonoBehaviour {
         
         Destroy(this.gameObject, destroyAfter);
     }
+
+    public void AffectSize(float factor) {
+        transform.localScale *= factor;
+    }
+
+    private float swingDuration = .12f;
     
     public void OnTriggerEnter(Collider other) {
         if ((damageLayerMask & (1 << other.gameObject.layer)) != 0) {
@@ -47,8 +53,9 @@ public class DamageInstance : MonoBehaviour {
 
                 if (IsFromPlayer) {
                     if (!playerBriefStoppedThisAttack) {
-                        playerBriefStoppedThisAttack = true;
-                        PlayerAttacks.BriefPause();
+                        // playerBriefStoppedThisAttack = true;
+                        PlayerAttacks.BriefPause(swingDuration);
+                        swingDuration = Mathf.Clamp(swingDuration - .02f, 0, 1.0f);
                     }
                 }
                 

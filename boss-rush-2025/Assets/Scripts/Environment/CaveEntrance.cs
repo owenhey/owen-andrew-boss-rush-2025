@@ -20,7 +20,6 @@ public class CaveEntrance : MonoBehaviour {
             movement.transform.DOJump(landingPosition.position, height, 1, time).SetEase(Ease.Linear).OnComplete(() => {
                 movement.Cutscened = false;
                 cam.gameObject.SetActive(false);
-                blobCam.gameObject.SetActive(true);
             });
         }
     }

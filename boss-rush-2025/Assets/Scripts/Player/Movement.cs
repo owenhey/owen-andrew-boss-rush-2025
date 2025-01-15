@@ -19,6 +19,10 @@ public class Movement : MonoBehaviour {
     public Transform leg2transform;
 
     public ParticleSystem groundEffectPS;
+
+    public LayerMask groundLayerMask;
+
+    public PlayerAttacks playerAttacks;
     
     // Hoping
     [Header("Hopping")] 
@@ -77,6 +81,45 @@ public class Movement : MonoBehaviour {
         direction.y = 0;
         playerCC.transform.LookAt(playerCC.transform.position + direction);
     }
+
+    public void ForceToFaceInputOrMouse() {
+        if (DetectInputMode.IsController) {
+            Vector2 inputV2 = moveAction.action.ReadValue<Vector2>();
+            if (inputV2 == Vector2.zero) return;
+        
+            Vector3 input = new Vector3(inputV2.x, 0, inputV2.y);
+            Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
+            Vector3 direction = rotation * input;
+            direction.y = 0;
+            playerCC.transform.LookAt(playerCC.transform.position + direction);
+        }
+        else {
+            // Raycast towards ground, if we hit, use the mouse, otherwise, just default to controller
+            RaycastHit hit;
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
+        
+            if (Physics.Raycast(ray, out hit, 100, groundLayerMask)) {
+                // Face towards this direction
+                Vector3 towardsMouse = hit.point - playerCC.transform.position;
+                towardsMouse.y = 0;
+                Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
+                Vector3 direction = rotation * towardsMouse;
+                direction.y = 0;
+                playerCC.transform.LookAt(playerCC.transform.position + direction);
+            }
+            else {
+                // Just do the normal movemnet one
+                Vector2 inputV2 = moveAction.action.ReadValue<Vector2>();
+                if (inputV2 == Vector2.zero) return;
+        
+                Vector3 input = new Vector3(inputV2.x, 0, inputV2.y);
+                Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
+                Vector3 direction = rotation * input;
+                direction.y = 0;
+                playerCC.transform.LookAt(playerCC.transform.position + direction);
+            }
+        }
+    }
     
     private void Roll(InputAction.CallbackContext obj) {
         if (Attacking) return;
@@ -123,7 +166,6 @@ public class Movement : MonoBehaviour {
     private Vector3 knockStartPoint;
     
     public void Knockback(Transform source) {
-        Debug.Log("Knocing back");
         TextPopups.Instance.Get().PopupAbove("Ouch!", transform, .5f);
         gettingKnocked = true;
         
@@ -221,10 +263,13 @@ public class Movement : MonoBehaviour {
             lastMoveDirection.y = 0;
         }
         Hop(magnitude);
-    
+
+        if (playerAttacks.midSwing == false) {
+            // Rotate towards the last movement direction
+            Quaternion targetRotation = Quaternion.LookRotation(lastMoveDirection);
+            playerCC.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 20);
+        }
         // Rotate towards the last movement direction
-        Quaternion targetRotation = Quaternion.LookRotation(lastMoveDirection);
-        playerCC.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 20);
         towards.y = -1;
     
         playerCC.Move(towards * (speed * Time.deltaTime));
