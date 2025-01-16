@@ -30,6 +30,11 @@ public class BlobEnemy : Enemy {
 
     [Header("blobs")] 
     public BlobSmallEnemy blobPrefab;
+    public float blobSpawnRate;
+    public int maxBlobcount;
+    public float searchForBlobsInTheWay = .25f;
+
+    private float nextSearchForBlobsInTheWay;
 
     public Transform centerTarget;
     
@@ -37,6 +42,7 @@ public class BlobEnemy : Enemy {
 
     private BlobAttack nextAttack;
     private float nextAttackTime = 3;
+    private float nextBlobSpawn = 3;
 
     private bool attacking = false;
 
@@ -54,12 +60,27 @@ public class BlobEnemy : Enemy {
                 if (shouldNextAttack) {
                     nextAttackTime = Time.time + attackCooldown;
                     StartCoroutine(BasicC());
-                    SpawnBlob();
                 }
             }
-            else {
-                
+
+            if (Time.time > nextBlobSpawn) {
+                for (var index = 0; index < spawnedBlobs.Count; index++) {
+                    var blob = spawnedBlobs[index];
+                    if (blob == null) {
+                        spawnedBlobs.RemoveAt(index);
+                        index--;
+                    }
+                }
+
+                SpawnBlob();
+                nextBlobSpawn = Time.time + ((CurrentHealth / maxHealth) > .5f ? blobSpawnRate : .66f * blobSpawnRate);
             }
+
+            if (Time.time > nextSearchForBlobsInTheWay) {
+                SearchForBlobs();
+                nextSearchForBlobsInTheWay = Time.time + searchForBlobsInTheWay;
+            }
+            
             Vector3 lookTarget;
             if ((targetPosition - cc.transform.position).magnitude < 1) {
                 lookTarget = player.transform.position;
@@ -80,13 +101,39 @@ public class BlobEnemy : Enemy {
         }
     }
 
+    private void SearchForBlobs() {
+        Debug.Log("SErcing");
+        Vector3 towardsPlayer = Movement.GetPlayerPos() - transform.position;
+
+        float disToPlayer = towardsPlayer.magnitude;
+
+        for (var index = 0; index < spawnedBlobs.Count; index++) {
+            var blob = spawnedBlobs[index];
+            if (blob == null) {
+                spawnedBlobs.RemoveAt(index);
+                index--;
+                continue;
+            }
+
+            if (blob.IsJumping) continue;
+            Vector3 towardsBlob = blob.transform.position - transform.position;
+            if (towardsBlob.magnitude > disToPlayer) continue;
+            
+            float dot = Vector3.Dot(towardsPlayer.normalized, towardsBlob.normalized);
+            Debug.Log(dot);
+            if (dot > .5f) {
+                blob.Jump();
+            }
+        }
+    }
+
     protected override void Die() {
         base.Die();
         bossCam.gameObject.SetActive(false);
 
         foreach (var blob in spawnedBlobs) {
             if (blob != null) {
-                Destroy(blob);
+                blob.Kill();
             }
         }
     }
@@ -99,6 +146,9 @@ public class BlobEnemy : Enemy {
         Invoke(nameof(SpawnBlob), .25f);
         Invoke(nameof(SpawnBlob), .66f);
         Invoke(nameof(SpawnBlob), .8f);
+
+        nextBlobSpawn = Time.time + (blobSpawnRate * 2);
+        nextSearchForBlobsInTheWay = Time.time + searchForBlobsInTheWay;
     }
 
     private void LookAt(Vector3 target) {
@@ -112,6 +162,8 @@ public class BlobEnemy : Enemy {
     private IEnumerator BasicC() {
         blobAttackInstance.Reset();
         blobAttackInstance.Source = transform;
+
+        TextPopups.Instance.Get().PopupAbove("!", transform.position + Vector3.one, .5f).SetColor(Color.red).SetSize(3);
         
         attacking = true;
         blobHead.DOLocalMove(blobPullBackPos.localPosition, .25f);
@@ -127,6 +179,10 @@ public class BlobEnemy : Enemy {
     }
 
     public void SpawnBlob() {
+        if (spawnedBlobs.Count >= maxBlobcount) {
+            return;
+        }
+        
         Vector2 onUnitCircle = Random.insideUnitCircle.normalized;
         Vector3 spawnLocation = new Vector3(onUnitCircle.x, 0, onUnitCircle.y) * 15 + // on the edge
                                 centerTarget.position + // Move it to the middle

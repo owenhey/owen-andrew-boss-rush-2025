@@ -23,6 +23,8 @@ public class Movement : MonoBehaviour {
     public LayerMask groundLayerMask;
 
     public PlayerAttacks playerAttacks;
+
+    public static Vector3 GetPlayerPos() => _curPlayerTargetLoc.position;
     
     // Hoping
     [Header("Hopping")] 
@@ -45,6 +47,8 @@ public class Movement : MonoBehaviour {
     private Vector3 rollStart;
     private float rollEndTime;
     private float rollStartTime;
+
+    private static Transform _curPlayerTargetLoc;
     
     // Input
     public InputActionReference moveAction;
@@ -61,6 +65,7 @@ public class Movement : MonoBehaviour {
 
     private void Awake() {
         targetPositionTrans.parent = null;
+        _curPlayerTargetLoc = targetPositionTrans;
     }
 
     private void OnEnable() {

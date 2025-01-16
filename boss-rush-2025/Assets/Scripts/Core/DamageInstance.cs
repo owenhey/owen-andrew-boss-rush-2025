@@ -14,7 +14,7 @@ public class DamageInstance : MonoBehaviour {
     
     private List<IDamagable> hitObjects = new();
 
-    private bool playerBriefStoppedThisAttack = false;
+    private static Collider[] hitColliders = new Collider[16];
 
     public void LateUpdate() {
         if (followTarget) {
@@ -25,7 +25,6 @@ public class DamageInstance : MonoBehaviour {
     public void Reset() {
         hitObjects.Clear();
         followTarget = null;
-        playerBriefStoppedThisAttack = false;
     }
 
 
@@ -52,16 +51,24 @@ public class DamageInstance : MonoBehaviour {
                 hitObjects.Add(damagable);
 
                 if (IsFromPlayer) {
-                    if (!playerBriefStoppedThisAttack) {
-                        // playerBriefStoppedThisAttack = true;
-                        PlayerAttacks.BriefPause(swingDuration);
-                        swingDuration = Mathf.Clamp(swingDuration - .02f, 0, 1.0f);
-                    }
+                    PlayerAttacks.BriefPause(swingDuration);
+                    swingDuration = Mathf.Clamp(swingDuration - .02f, 0, 1.0f);
                 }
-                
                 
                 damagable.TakeDamage(damage, Source != null ? Source : transform);
             }
+        }
+    }
+
+    public void SingleSwipe() {
+        Collider col = GetComponent<Collider>();
+        int numHit = 0;
+        if (col is SphereCollider sphereCollider) {
+            numHit = Physics.OverlapSphereNonAlloc(transform.position, sphereCollider.radius, hitColliders);
+        }
+
+        for (int i = 0; i < numHit; i++) {
+            OnTriggerEnter(hitColliders[i]);
         }
     }
 }
