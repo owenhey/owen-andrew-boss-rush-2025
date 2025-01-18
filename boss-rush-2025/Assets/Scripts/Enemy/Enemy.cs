@@ -49,27 +49,22 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
 
     private void Update() {
+        OnUpdate();
         if (!knockedBack && ShouldMove) {
             Move();
         }
-
-        OnUpdate();
     }
 
     protected virtual void OnUpdate() { }
     
     protected virtual void Move() {
-        transformTarget.position = Vector3.SmoothDamp(cc.transform.position, targetPosition, ref vel, damping);
+        transformTarget.position = Vector3.SmoothDamp(cc.transform.position, targetPosition, ref vel, damping, speed);
 
         Vector3 towards = (transformTarget.position - cc.transform.position);
         if (towards != Vector3.zero) {
-            towards.Normalize();
-            towards *= speed * Time.deltaTime;
             towards.y = -1;
-
             cc.Move(towards);
         }
-        
     }
     
     public virtual void TakeDamage(float damage, Transform source) {
