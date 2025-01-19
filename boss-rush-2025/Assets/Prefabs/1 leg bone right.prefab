@@ -442,7 +442,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f4f0fa0e725869545a7d471f943b4caa, type: 2}
+  - {fileID: 2100000, guid: b2daf1f4ec7f54c3684367b470fbd521, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -651,6 +651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IKSolver: {fileID: 6070491197765326769}
+  spider: {fileID: 0}
   SpiderParent: {fileID: 0}
   Body: {fileID: 0}
   DesiredTransform: {fileID: 6773510087972315239}
@@ -721,7 +722,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f4f0fa0e725869545a7d471f943b4caa, type: 2}
+  - {fileID: 2100000, guid: b2daf1f4ec7f54c3684367b470fbd521, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

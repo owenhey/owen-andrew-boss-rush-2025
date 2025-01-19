@@ -17,8 +17,6 @@ public class Spider : Enemy {
     public Vector3 velocity;
     private Vector3 previousPosition;
 
-    public Transform targetPos;
-
     private void Start() {
         for (int i = 0; i < leftLegs.Count; i++) {
             leftLegs[i].spider = rightLegs[i].spider = this;
@@ -29,8 +27,6 @@ public class Spider : Enemy {
         base.OnUpdate();
         velocity = (transform.position - previousPosition) / Time.deltaTime;
         previousPosition = transform.position;
-
-        targetPosition = targetPos.position;
 
         LeanTowards(targetPosition);
 
@@ -56,6 +52,7 @@ public class Spider : Enemy {
     private void LookAt(Vector3 target) {
         Vector3 lookTowards = target - transform.position;
         lookTowards.y = 0;
+        if (lookTowards == Vector3.zero) return;
             
         Quaternion targetRotation = Quaternion.LookRotation(lookTowards);
         cc.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 6);

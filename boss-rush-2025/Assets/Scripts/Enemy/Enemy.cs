@@ -120,6 +120,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     private void Knockback() {
         currentKnockback?.Kill();
         Vector3 x = cc.transform.position;
+        targetPosition = knockbackTarget;
         currentKnockback = DOTween.To(() => x, (y) => {
             var dV = y - cc.transform.position;
             cc.Move(dV);
