@@ -60,7 +60,7 @@ public class Spider : Enemy {
             }
             
             if (autoMove) {
-                bool inWalkingPhase = (int)(((Time.time) / 3f) + startCombatTime) % 2 == 0;
+                bool inWalkingPhase = (int)((Time.time - startCombatTime) / 3f) % 2 == 0;
                 if (!inWalkingPhase && previousWalkingPhase) {
                     StartCoroutine(SingleSpiderAttack());
                 }
@@ -115,7 +115,7 @@ public class Spider : Enemy {
         towards.y = 0;
         float magnitude = towards.magnitude;
 
-        Vector3 worldLean = Vector3.up + (towards * (magnitude * .07f));
+        Vector3 worldLean = Vector3.up + (towards * (magnitude * .08f));
         worldLean.Normalize();
 
         // Convert the world-space up vector to local space
@@ -142,13 +142,13 @@ public class Spider : Enemy {
     }
 
     private IEnumerator Spider3AttackCoroutine() {
-        nextAttackTime = Time.time + 12.0f;
+        nextAttackTime = Time.time + (Random.Range(0.0f, 1.0f) < .5f ? 13.0f : 19.0f);
         knockbackFactorCode = 0.0f;
         autoMove = false;
         
         // Run away from the player for a moment, then run towards really quickly
         Vector3 location = GetRandomSpotInCircle();
-        while ((player.transform.position - location).magnitude < 5) {
+        while ((player.transform.position - location).magnitude < 10) {
             location = GetRandomSpotInCircle();
         }
         
@@ -164,7 +164,6 @@ public class Spider : Enemy {
         yield return new WaitForSeconds(.15f);
         
         DamageInstance.SingleSwipe();
-        TextPopups.Instance.Get().PopupAbove("hit", transform, .25f);
         
         BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
             BodyParent.DOLocalMove(Vector3.zero, .1f);
@@ -179,7 +178,6 @@ public class Spider : Enemy {
         yield return new WaitForSeconds(.15f);
         
         DamageInstance.SingleSwipe();
-        TextPopups.Instance.Get().PopupAbove("hit", transform, .25f);
         
         BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
             BodyParent.DOLocalMove(Vector3.zero, .1f);
@@ -194,7 +192,6 @@ public class Spider : Enemy {
         yield return new WaitForSeconds(.15f);
         
         DamageInstance.SingleSwipe();
-        TextPopups.Instance.Get().PopupAbove("hit", transform, .25f);
         
         BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
             BodyParent.DOLocalMove(Vector3.zero, .1f);
@@ -204,7 +201,7 @@ public class Spider : Enemy {
         knockbackFactorCode = 1.0f;
         autoMove = true;
         previousWalkingPhase = false;
-        startCombatTime = Time.time + 4;
+        startCombatTime = Time.time;
     }
 
     private Vector3 GetRandomSpotInCircle() {
