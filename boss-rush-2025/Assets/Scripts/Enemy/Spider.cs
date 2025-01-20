@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class Spider : Enemy {
@@ -12,10 +14,32 @@ public class Spider : Enemy {
     [Range(0, 1)]
     public float legMoveTime = .15f;
 
+    [Header("transforms")]
     public Transform Body;
+    public Transform BodyParent;
+    public Transform BodyAttack;
     
     public Vector3 velocity;
     private Vector3 previousPosition;
+
+    private bool seekingPlayer;
+
+    public float minSpiderDistance = 2.0f;
+    public Transform areaCenter;
+    public DamageInstance DamageInstance;
+    public DamageInstance SingleDamageInstance;
+
+    [Header("3 attacks")]
+    public float spiderFollowTime = .5f;
+    public float spiderSitTime = 1.0f;
+    private bool autoMove = false;
+    
+    
+    private float nextAttackTime;
+    private float startCombatTime;
+
+    private bool previousWalkingPhase = false;
+    
 
     private void Start() {
         for (int i = 0; i < leftLegs.Count; i++) {
@@ -25,15 +49,34 @@ public class Spider : Enemy {
 
     protected override void OnUpdate(){
         base.OnUpdate();
-        velocity = (transform.position - previousPosition) / Time.deltaTime;
-        previousPosition = transform.position;
+        if (InCombat) {
+            velocity = (transform.position - previousPosition) / Time.deltaTime;
+            previousPosition = transform.position;
 
-        LeanTowards(targetPosition);
+            LeanTowards(targetPosition);
 
-        Vector3 lookTarget = targetPosition;
-        lookTarget.y = transform.position.y;
-        LookAt(lookTarget);
-        
+            if (Time.time > nextAttackTime) {
+                StartCoroutine(Spider3AttackCoroutine());
+            }
+            
+            if (autoMove) {
+                bool inWalkingPhase = (int)(((Time.time) / 3f) + startCombatTime) % 2 == 0;
+                if (!inWalkingPhase && previousWalkingPhase) {
+                    StartCoroutine(SingleSpiderAttack());
+                }
+                previousWalkingPhase = inWalkingPhase;
+                
+                
+                Vector3 towardsPlayer = player.transform.position - transform.position;
+                towardsPlayer.y = 0;
+                if (towardsPlayer.magnitude > minSpiderDistance && inWalkingPhase) {
+                    targetPosition = player.transform.position;
+                }
+                else {
+                    targetPosition = transform.position;
+                }
+            }
+        }
         
         int count = (int)(Time.time / switchLegTime);
         for (int i = 0; i < leftLegs.Count; i++) {
@@ -47,12 +90,20 @@ public class Spider : Enemy {
             leftLegs[i].legMoveTime = legMoveTime;
             rightLegs[i].legMoveTime = legMoveTime;
         }
+        
+        LookAt(player.transform.position);
     }
-    
+
+    protected override void HandleCombatStart() {
+        base.HandleCombatStart();
+        nextAttackTime = Time.time + 6.0f;
+        startCombatTime = Time.time;
+        autoMove = true;
+    }
+
     private void LookAt(Vector3 target) {
         Vector3 lookTowards = target - transform.position;
         lookTowards.y = 0;
-        if (lookTowards == Vector3.zero) return;
             
         Quaternion targetRotation = Quaternion.LookRotation(lookTowards);
         cc.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 6);
@@ -77,5 +128,89 @@ public class Spider : Enemy {
         Quaternion localRotation = Quaternion.FromToRotation(localUp, localTargetDir);
 
         Body.localRotation = localRotation;
+    }
+    
+    private IEnumerator SingleSpiderAttack() {
+        TextPopups.Instance.Get().PopupAbove("!", transform, .25f).SetColor(Color.red).SetSize(4.0f);
+        yield return new WaitForSeconds(.25f);
+        BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
+            SingleDamageInstance.SingleSwipe();
+            BodyParent.DOLocalMove(Vector3.zero, .1f);
+        });
+        yield return new WaitForSeconds(.1f);
+        // Attack
+    }
+
+    private IEnumerator Spider3AttackCoroutine() {
+        nextAttackTime = Time.time + 12.0f;
+        knockbackFactorCode = 0.0f;
+        autoMove = false;
+        
+        // Run away from the player for a moment, then run towards really quickly
+        Vector3 location = GetRandomSpotInCircle();
+        while ((player.transform.position - location).magnitude < 5) {
+            location = GetRandomSpotInCircle();
+        }
+        
+        targetPosition = location;
+        speedFactor = 4f;
+        yield return new WaitForSeconds(1.0f);
+        
+        speedFactor = 10.0f;
+        Vector3 playerPos = Movement.GetPlayerPos();
+        Vector3 towardsSpider = (transform.position - playerPos).normalized;
+        targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
+        
+        yield return new WaitForSeconds(.15f);
+        
+        DamageInstance.SingleSwipe();
+        TextPopups.Instance.Get().PopupAbove("hit", transform, .25f);
+        
+        BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
+            BodyParent.DOLocalMove(Vector3.zero, .1f);
+        });
+        
+        yield return new WaitForSeconds(.8f);
+        
+        playerPos = Movement.GetPlayerPos();
+        towardsSpider = (transform.position - playerPos).normalized;
+        targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
+        
+        yield return new WaitForSeconds(.15f);
+        
+        DamageInstance.SingleSwipe();
+        TextPopups.Instance.Get().PopupAbove("hit", transform, .25f);
+        
+        BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
+            BodyParent.DOLocalMove(Vector3.zero, .1f);
+        });
+        
+        yield return new WaitForSeconds(.5f);
+        
+        playerPos = Movement.GetPlayerPos();
+        towardsSpider = (transform.position - playerPos).normalized;
+        targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
+        
+        yield return new WaitForSeconds(.15f);
+        
+        DamageInstance.SingleSwipe();
+        TextPopups.Instance.Get().PopupAbove("hit", transform, .25f);
+        
+        BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
+            BodyParent.DOLocalMove(Vector3.zero, .1f);
+        });
+        
+        speedFactor = 1.0f;
+        knockbackFactorCode = 1.0f;
+        autoMove = true;
+        previousWalkingPhase = false;
+        startCombatTime = Time.time + 4;
+    }
+
+    private Vector3 GetRandomSpotInCircle() {
+        var insideUnitCircle = Random.insideUnitCircle;
+        Vector3 circle = new Vector3(insideUnitCircle.x, 0, insideUnitCircle.y);
+        Vector3 randomSpot = (circle * 10) + areaCenter.position;
+        return randomSpot;
     }
 }

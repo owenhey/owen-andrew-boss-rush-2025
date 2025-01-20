@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     [Header("Stats")] 
     public float maxHealth = 35;
     public float speed;
+    protected float speedFactor = 1.0f;
     public float damping;
     private Vector3 vel;
 
@@ -58,7 +59,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     protected virtual void OnUpdate() { }
     
     protected virtual void Move() {
-        transformTarget.position = Vector3.SmoothDamp(cc.transform.position, targetPosition, ref vel, damping, speed);
+        transformTarget.position = Vector3.SmoothDamp(cc.transform.position, targetPosition, ref vel, damping, speed * speedFactor);
 
         Vector3 towards = (transformTarget.position - cc.transform.position);
         if (towards != Vector3.zero) {
@@ -68,28 +69,29 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     
     public virtual void TakeDamage(float damage, Transform source) {
+        Vector3 inBetween = transform.position + Vector3.up;
         if (knockBackFactor * knockbackFactorCode != 0.0) {
             knockedBack = true;
             Vector3 direction = cc.transform.position - source.position;
             direction.y = 0;
             direction.Normalize();
 
-            var inBetween = (source.transform.position + transform.position) * .5f;
+            inBetween = (source.transform.position + transform.position) * .5f;
             inBetween += Vector3.up;
-            
-            SplatManager.Instance.Get().Setup(inBetween, hitColor);
-
-            if (!InCombat) {
-                InCombat = true;
-                TextPopups.Instance.Get().PopupAbove("Die!!!", player.transform, 1.0f);
-                TextPopups.Instance.Get().PopupAbove(combatStartText, transform, 2.0f, .5f);
-                HandleCombatStart();
-            }
         
             knockbackTarget = knockbackFactorCode * knockBackFactor * CalcKnockback(damage) * direction + cc.transform.position;
-            TextPopups.Instance.Get().PopupAbove(damage.ToString(), Vector3.Lerp(cc.transform.position, knockbackTarget, .5f), .5f);
             
             Knockback();
+        }
+        
+        TextPopups.Instance.Get().PopupAbove(damage.ToString(), inBetween, .5f);
+        SplatManager.Instance.Get().Setup(inBetween, hitColor);
+
+        if (!InCombat) {
+            InCombat = true;
+            TextPopups.Instance.Get().PopupAbove("Die!!!", player.transform, 1.0f);
+            TextPopups.Instance.Get().PopupAbove(combatStartText, transform, 2.0f, .5f);
+            HandleCombatStart();
         }
 
         currentHealth -= damage;

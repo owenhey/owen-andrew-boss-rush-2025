@@ -70,5 +70,7 @@ public class DamageInstance : MonoBehaviour {
         for (int i = 0; i < numHit; i++) {
             OnTriggerEnter(hitColliders[i]);
         }
+        
+        Reset();
     }
 }
