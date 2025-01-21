@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour, IDamagable {
     public string EnemyName;
@@ -41,6 +43,9 @@ public class Enemy : MonoBehaviour, IDamagable {
     public Action OnDie;
 
     private Tween currentKnockback;
+
+    [TextArea(2,2)]
+    public List<string> possibleEnterBossZoneMessages;
 
     protected virtual void Awake() {
         transformTarget.parent = null;
@@ -117,6 +122,13 @@ public class Enemy : MonoBehaviour, IDamagable {
         if (useBossHealthBar) {
             BossHealthBar.instance.Setup(this);
         }
+    }
+
+    public virtual void HandlePlayerEnterBossZone() {
+        if (possibleEnterBossZoneMessages == null || possibleEnterBossZoneMessages.Count == 0) return;
+
+        var randomString = possibleEnterBossZoneMessages[Random.Range(0, possibleEnterBossZoneMessages.Count)];
+        TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.0f);
     }
 
     private void Knockback() {

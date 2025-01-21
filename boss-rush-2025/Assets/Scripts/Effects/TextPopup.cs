@@ -5,6 +5,18 @@ using UnityEngine;
 public class TextPopup : MonoBehaviour {
     [SerializeField] private TextMeshPro Text;
 
+    private Transform cam;
+
+    private void Awake() {
+        cam = Camera.main.transform;
+    }
+    
+    private void LateUpdate() {
+        Vector3 atCamera = (cam.position - transform.position).normalized;
+        Vector3 awayFromCamSpot = transform.position - atCamera;
+        transform.LookAt(awayFromCamSpot);
+    }
+    
     public TextPopup Popup(string text, Vector3 location, float duration = 3.0f, float delay = 0) {
         SetColor(Color.white);
         gameObject.SetActive(true);
@@ -35,10 +47,10 @@ public class TextPopup : MonoBehaviour {
     }
     
     public TextPopup PopupAbove(string text, Vector3 location, float duration = 3.0f, float delay = 0) {
-        return Popup(text, location + Vector3.up * 2.5f, duration, delay);
+        return Popup(text, location + Vector3.up * 3.0f, duration, delay);
     }
 
     public TextPopup PopupAbove(string text, Transform location, float duration = 3.0f, float delay = 0) {
-        return Popup(text, location.position + Vector3.up * 2.5f, duration, delay);
+        return Popup(text, location.position + Vector3.up * 3.0f, duration, delay);
     }
 }

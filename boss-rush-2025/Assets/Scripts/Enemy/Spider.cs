@@ -39,6 +39,8 @@ public class Spider : Enemy {
     private float startCombatTime;
 
     private bool previousWalkingPhase = false;
+
+    public GameObject exitBlocker;
     
 
     private void Start() {
@@ -99,6 +101,7 @@ public class Spider : Enemy {
         nextAttackTime = Time.time + 6.0f;
         startCombatTime = Time.time;
         autoMove = true;
+        exitBlocker.SetActive(true);
     }
 
     private void LookAt(Vector3 target) {
@@ -139,6 +142,11 @@ public class Spider : Enemy {
         });
         yield return new WaitForSeconds(.1f);
         // Attack
+    }
+
+    protected override void Die() {
+        base.Die();
+        exitBlocker.SetActive(false);
     }
 
     private IEnumerator Spider3AttackCoroutine() {
@@ -202,6 +210,11 @@ public class Spider : Enemy {
         autoMove = true;
         previousWalkingPhase = false;
         startCombatTime = Time.time;
+    }
+
+    public override void HandlePlayerEnterBossZone() {
+        base.HandlePlayerEnterBossZone();
+        
     }
 
     private Vector3 GetRandomSpotInCircle() {
