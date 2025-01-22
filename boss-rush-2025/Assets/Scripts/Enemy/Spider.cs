@@ -41,12 +41,19 @@ public class Spider : Enemy {
     private bool previousWalkingPhase = false;
 
     public GameObject exitBlocker;
+
+    private int numSmallSpiders = 0;
+
+    public LittleSpider[] smallSpiders;
+
+    private int randomRowStart;
     
 
     private void Start() {
         for (int i = 0; i < leftLegs.Count; i++) {
             leftLegs[i].spider = rightLegs[i].spider = this;
         }
+        randomRowStart = Random.Range(1, 5);
     }
 
     protected override void OnUpdate(){
@@ -91,6 +98,35 @@ public class Spider : Enemy {
             
             leftLegs[i].legMoveTime = legMoveTime;
             rightLegs[i].legMoveTime = legMoveTime;
+        }
+
+        float healthPercent = CurrentHealth / maxHealth;
+        if (healthPercent < .75f && numSmallSpiders == 0) {
+            smallSpiders[0].gameObject.SetActive(true);
+            smallSpiders[0].row = randomRowStart % 7;
+            smallSpiders[0].transform.SetParent(null, true);
+            smallSpiders[0].speed *= Random.Range(1.0f, 1.5f);
+            
+            randomRowStart += Random.Range(1, 3);
+            numSmallSpiders++;
+        }
+        else if (healthPercent < .55f && numSmallSpiders == 1) {
+            smallSpiders[1].gameObject.SetActive(true);
+            smallSpiders[1].row = randomRowStart % 7;
+            smallSpiders[1].transform.SetParent(null, true);
+            smallSpiders[1].speed *= Random.Range(1.0f, 1.5f);
+            smallSpiders[1].direction = -1;
+            
+            randomRowStart += Random.Range(1, 3);
+            numSmallSpiders++;
+        }
+        else if (healthPercent < .3f && numSmallSpiders == 2) {
+            smallSpiders[2].gameObject.SetActive(true);
+            smallSpiders[2].transform.SetParent(null, true);
+            
+            smallSpiders[2].row = randomRowStart % 7;
+            smallSpiders[2].speed *= Random.Range(1.0f, 1.5f);
+            numSmallSpiders++;
         }
         
         LookAt(player.transform.position);
@@ -147,6 +183,10 @@ public class Spider : Enemy {
     protected override void Die() {
         base.Die();
         exitBlocker.SetActive(false);
+
+        foreach (var littlespider in smallSpiders) {
+            Destroy(littlespider);
+        }
     }
 
     private IEnumerator Spider3AttackCoroutine() {

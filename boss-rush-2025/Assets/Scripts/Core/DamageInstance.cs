@@ -16,6 +16,8 @@ public class DamageInstance : MonoBehaviour {
 
     private static Collider[] hitColliders = new Collider[16];
 
+    public Action OnHit;
+
     public void LateUpdate() {
         if (followTarget) {
             transform.position = followTarget.position;
@@ -56,6 +58,7 @@ public class DamageInstance : MonoBehaviour {
                 }
                 
                 damagable.TakeDamage(damage, Source != null ? Source : transform);
+                OnHit?.Invoke();
             }
         }
     }
