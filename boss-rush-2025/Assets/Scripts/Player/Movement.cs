@@ -66,6 +66,8 @@ public class Movement : MonoBehaviour {
     private void Awake() {
         targetPositionTrans.parent = null;
         _curPlayerTargetLoc = targetPositionTrans;
+
+        Application.targetFrameRate = 144;
     }
 
     private void OnEnable() {

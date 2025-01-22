@@ -102,7 +102,6 @@ public class BlobEnemy : Enemy {
     }
 
     private void SearchForBlobs() {
-        Debug.Log("SErcing");
         Vector3 towardsPlayer = Movement.GetPlayerPos() - transform.position;
 
         float disToPlayer = towardsPlayer.magnitude;
