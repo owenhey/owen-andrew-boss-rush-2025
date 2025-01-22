@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = System.Random;
 
 public class Movement : MonoBehaviour {
     public CharacterController playerCC;
@@ -63,6 +64,8 @@ public class Movement : MonoBehaviour {
 
     public Transform rollCenter;
 
+    public FlailMovement flail;
+    
     private void Awake() {
         targetPositionTrans.parent = null;
         _curPlayerTargetLoc = targetPositionTrans;
@@ -194,6 +197,10 @@ public class Movement : MonoBehaviour {
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
 
+        if (Input.GetKeyDown(KeyCode.G)) {
+            BlowUp(Vector3.zero);
+        }
+
         if (Cutscened) return;
         if (gettingKnocked) {
             if (Time.time > knockEnd) {
@@ -215,6 +222,26 @@ public class Movement : MonoBehaviour {
                 Move();
             }
         }
+    }
+
+    public void BlowUp(Vector3 forceDirection) {
+        Cutscened = true;
+
+        var rbs = GetComponentsInChildren<Rigidbody>(true);
+        foreach (var rb in rbs) {
+            rb.isKinematic = false;
+            rb.transform.SetParent(null, true);
+            rb.GetComponent<Collider>().enabled = true;
+            Vector3 force = new Vector3(UnityEngine.Random.Range(-1.0f, 1.0f), UnityEngine.Random.Range(-1.0f, 1.0f),
+                UnityEngine.Random.Range(-1.0f, 1.0f)) * .8f;
+            force += (targetPositionTrans.position - transform.position) * 1f;
+            force += (forceDirection) * 3.0f;
+            rb.AddForce(force, ForceMode.Impulse);
+        }
+        
+        groundEffectPS.Stop();
+
+        flail.enabled = false;
     }
 
     private void RollTowards() {

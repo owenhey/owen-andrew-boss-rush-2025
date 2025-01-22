@@ -29,14 +29,15 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
         currentHealth -= damage;
         OnTakeDamage?.Invoke(-damage, currentHealth);
         if (currentHealth <= 0) {
-            Die();
+            Die(movement.transform.position - source.position);
         }
 
         ScreenShake();
     }
 
-    private void Die() {
+    private void Die(Vector3 direction) {
         OnDie?.Invoke();
+        movement.BlowUp(direction.normalized);
     }
 
     private void ScreenShake() {

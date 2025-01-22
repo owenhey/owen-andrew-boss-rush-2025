@@ -30,6 +30,12 @@ public class AddOutlineMeshes : MonoBehaviour {
             newRenderer.transform.SetLocalPositionAndRotation(Vector3.zero, quaternion.identity);
             newRenderer.transform.localScale = Vector3.one;
             newRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            
+            if (renderer.gameObject.layer == 12) {
+                Destroy(newRenderer.GetComponent<Rigidbody>());
+                Destroy(newRenderer.GetComponent<Collider>());
+            }
+            
             if (newRenderer.TryGetComponent(out Collider c)) {
                 Destroy(c);
             }

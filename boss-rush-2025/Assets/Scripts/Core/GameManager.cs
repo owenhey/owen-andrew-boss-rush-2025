@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,7 +10,17 @@ public class GameManager : MonoBehaviour {
 
         PlayerHealth.OnDie += Reset;
     }
+
+    private void OnDestroy() {
+        PlayerHealth.OnDie -= Reset;
+    }
+    
     public void Reset() {
-        SceneManager.LoadScene(0);
+        StartCoroutine(delayRestart());
+
+        IEnumerator delayRestart() {
+            yield return new WaitForSeconds(2.0f);
+            SceneManager.LoadScene(0);
+        }
     }
 }
