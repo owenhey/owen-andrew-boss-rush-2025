@@ -29,7 +29,7 @@ public class BlobSmallEnemy : Enemy {
 
     public DamageInstance damageInstance;
 
-    private static List<Transform> blobAttacks = new();
+    public static List<Transform> blobAttacks = new();
 
     public bool IsJumping;
 

@@ -51,6 +51,7 @@ public class BlobEnemy : Enemy {
     protected override void Awake() {
         base.Awake();
         blobAttackInstance.gameObject.SetActive(false);
+        BlobSmallEnemy.blobAttacks.Clear();
     }
 
     protected override void OnUpdate() {
