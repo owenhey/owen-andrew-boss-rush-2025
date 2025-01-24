@@ -6,7 +6,7 @@ public class BossAreaTrigger : MonoBehaviour {
     public Enemy boss;
 
     public void OnTriggerEnter(Collider other) {
-        if (other.gameObject.layer == 7) {
+        if (other.gameObject.layer == 7 || other.gameObject.layer == 8) {
             if (trigger) return;
             trigger = true;
             boss.HandlePlayerEnterBossZone();
