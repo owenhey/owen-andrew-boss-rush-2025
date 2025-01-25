@@ -16,7 +16,17 @@ public class DamageInstance : MonoBehaviour {
 
     private static Collider[] hitColliders = new Collider[16];
 
+    public Transform capsulePoint1;
+    public Transform capsulePoint2;
+
+    public Collider c;
+
     public Action OnHit;
+    public bool Enabled = true;
+
+    private void Awake() {
+        c = GetComponent<Collider>();
+    }
 
     public void LateUpdate() {
         if (followTarget) {
@@ -45,6 +55,7 @@ public class DamageInstance : MonoBehaviour {
     private float swingDuration = .12f;
     
     public void OnTriggerEnter(Collider other) {
+        if (!Enabled) return;
         if ((damageLayerMask & (1 << other.gameObject.layer)) != 0) {
             if (other.TryGetComponent(out IDamagable damagable)) {
                 if (hitObjects.Contains(damagable)) {
@@ -63,17 +74,23 @@ public class DamageInstance : MonoBehaviour {
         }
     }
 
-    public void SingleSwipe() {
+    public void SingleSwipe(bool reset = true) {
         Collider col = GetComponent<Collider>();
         int numHit = 0;
         if (col is SphereCollider sphereCollider) {
             numHit = Physics.OverlapSphereNonAlloc(transform.position, sphereCollider.radius, hitColliders);
+        }
+        if (col is CapsuleCollider capsuleCollider) {
+            Debug.Log("ER");
+            // Perform the capsule overlap check
+            numHit = Physics.OverlapCapsuleNonAlloc(capsulePoint1.position, capsulePoint2.position, .4f, hitColliders);
         }
 
         for (int i = 0; i < numHit; i++) {
             OnTriggerEnter(hitColliders[i]);
         }
         
-        Reset();
+        if(reset)
+         Reset();
     }
 }

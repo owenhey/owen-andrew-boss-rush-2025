@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class RobotEnemy : Enemy {
     private float nextMove = float.MaxValue;
     private float nextAttack = float.MaxValue;
     private bool attacking = false;
+    private bool spinAttacking = false;
     private Vector3 attackTargetVel;
 
     [Header("Stats")] 
@@ -17,7 +19,12 @@ public class RobotEnemy : Enemy {
     public float attackDuration = 1.0f;
     public float attackTargetSpeed = 3.0f;
     public float attackTargetDamping = .5f;
+    public float laserDelay = .3f;
+    public float spinDelay = .3f;
     public float rotateTime = 7;
+    public float spinAttackRotateSpeed = 30;
+    public float spinAttackDuration = 3;
+    public int SpinLimbCount = 4;
     
     [Header("Transforms")]
     public Transform centerOfArea;
@@ -28,10 +35,29 @@ public class RobotEnemy : Enemy {
     public Transform smile;
     public DamageInstance laser;
     public Transform laserParent;
+    public Transform spinLaserInstance;
+    public Transform spinParent;
+
+    [ColorUsage(true, true)] public Color regLaserColor;
+    [ColorUsage(true, true)] public Color activeLaserColor;
+    public Material laserMat;
+    
+    private int attackCount = 0;
+
+    private List<(Transform, DamageInstance)> spinAttacks = new();
 
     private void Start() {
         behindPlayerTarget.SetParent(null, true);
         laser.gameObject.SetActive(false);
+
+        spinParent.gameObject.SetActive(false);
+        spinAttacks.Add((spinLaserInstance, spinLaserInstance.GetComponentInChildren<DamageInstance>(true)));
+        for (int i = 0; i < SpinLimbCount - 1; i++) {
+            float rotation = 360.0f / (SpinLimbCount);
+            var newLaser = Instantiate(spinLaserInstance, spinLaserInstance.transform.parent);
+            newLaser.transform.localEulerAngles = new Vector3(0, (i + 1) * rotation, 0);
+            spinAttacks.Add((newLaser.transform, newLaser.GetComponentInChildren<DamageInstance>(true)));
+        }
     }
     
     protected override void OnUpdate() {
@@ -41,13 +67,27 @@ public class RobotEnemy : Enemy {
                 StartCoroutine(MoveToLocation());
             }
             if (Time.time > nextAttack) {
-                StartCoroutine(Attack());
+                attackCount++;
+                if (attackCount % 4 == 0) {
+                    StartCoroutine(CircleAttack());
+                }
+                else {
+                    StartCoroutine(Attack());
+                }
+            }
+
+            if (spinAttacking) {
+                float factor = CurrentHealth / maxHealth > .5f ? 1.0f : 1.5f;
+                spinParent.Rotate(new Vector3(0, factor * spinAttackRotateSpeed * Time.deltaTime, 0));
             }
 
             if (attacking) {
                 MoveAttackThing(false);
                 head.LookAt(behindPlayerTarget);
-                laserParent.transform.localScale = Vector3.one + Vector3.one * (Mathf.Sin(Time.time * 10) * .1f);
+                // laserParent.transform.localScale = Vector3.one + Vector3.one * (Mathf.Sin(Time.time * 15) * .15f);
+            }
+            else {
+                head.LookAt(player.transform.position + Vector3.up * 2);
             }
 
             if (knockedBack) {
@@ -119,7 +159,7 @@ public class RobotEnemy : Enemy {
         nextMove = Time.time + firstMoveTime;
         nextAttack = Time.time + firstAttackTime;
 
-        smile.DOLocalRotate(new Vector3(0, 0, 180), .35f);
+        smile.DOLocalRotate(new Vector3(0, 0, 180), .5f);
         ShouldMove = false;
     }
     
@@ -130,21 +170,79 @@ public class RobotEnemy : Enemy {
         Quaternion targetRotation = Quaternion.LookRotation(lookTowards);
         cc.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateTime);
     }
+    
+    private IEnumerator CircleAttack() {
+        spinAttacking = true;
+        Debug.Log("Circle attack");
+        nextAttack = Time.time + timeBetweenAttacks + spinAttackDuration;
+
+        laserMat.SetColor("_Color", regLaserColor);
+        spinParent.gameObject.SetActive(true);
+
+        foreach (var spinAttack in spinAttacks) {
+            spinAttack.Item2.Reset();
+            spinAttack.Item2.c.enabled = false;
+            spinAttack.Item1.localScale = new Vector3(.25f, .25f, 1.0f);
+        }
+        laser.Enabled = false;
+
+        yield return new WaitForSeconds(spinDelay);
+        foreach (var spinAttack in spinAttacks) {
+            spinAttack.Item1.DOScale(Vector3.one, .15f);
+            spinAttack.Item2.c.enabled = true;
+        }
+        laserMat.DOColor(activeLaserColor, "_Color", .15f);
+        
+        for (int i = 0; i < 10; i++) {
+            foreach (var spinAttack in spinAttacks) {
+                spinAttack.Item2.SingleSwipe();
+            }
+            yield return new WaitForSeconds(spinAttackDuration * .1f);
+        }
+        foreach (var spinAttack in spinAttacks) {
+            spinAttack.Item2.SingleSwipe();
+        }
+        
+        spinAttacking = false;
+        spinParent.gameObject.SetActive(false);
+    }
 
     private IEnumerator Attack() {
         nextAttack = Time.time + timeBetweenAttacks;
         attacking = true;
-        
-        behindPlayerTarget.gameObject.SetActive(true);
+
+        laserMat.SetColor("_Color", regLaserColor);
+        laser.Enabled = false;
+        laser.Reset();
+        laser.c.enabled = false;
         MoveAttackThing(true);
-        head.LookAt(behindPlayerTarget.position);
+        laserParent.localScale = new Vector3(.25f, .25f, 1.0f);
         laser.gameObject.SetActive(true);
+        head.LookAt(behindPlayerTarget.position);
+
+        
+        float d = .25f;
+        yield return new WaitForSeconds(laserDelay - d);
+        TextPopups.Instance.Get().PopupAbove("!", transform, .25f).SetColor(Color.red).SetSize(4.0f);
+        yield return new WaitForSeconds(d);
+        
+        laserMat.DOColor(activeLaserColor, "_Color", .1f);
+        laser.SingleSwipe();
+        laser.c.enabled = true;
+        laser.Enabled = true;
+        behindPlayerTarget.gameObject.SetActive(true);
+        laserParent.DOScale(new Vector3(1.0f, 1.0f, 1.0f), .1f);
         yield return new WaitForSeconds(attackDuration);
+        laser.SingleSwipe();
+        laser.Enabled = false;
+        laser.gameObject.SetActive(false);
+        attacking = false;
         behindPlayerTarget.gameObject.SetActive(true);
     }
 
     private IEnumerator MoveToLocation() {
         nextMove = Time.time + timeBetweenMoves;
+        if (spinAttacking) yield break;
 
         ShouldMove = true;
         Vector3 targetPos = GetRandomSpot();

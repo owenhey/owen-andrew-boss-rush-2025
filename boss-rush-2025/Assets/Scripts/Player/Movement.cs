@@ -108,7 +108,7 @@ public class Movement : MonoBehaviour {
             RaycastHit hit;
             Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
         
-            if (Physics.Raycast(ray, out hit, 100, groundLayerMask)) {
+            if (false && Physics.Raycast(ray, out hit, 100, groundLayerMask)) {
                 // Face towards this direction
                 Vector3 towardsMouse = hit.point - playerCC.transform.position;
                 towardsMouse.y = 0;
@@ -234,8 +234,8 @@ public class Movement : MonoBehaviour {
             rb.GetComponent<Collider>().enabled = true;
             Vector3 force = new Vector3(UnityEngine.Random.Range(-1.0f, 1.0f), UnityEngine.Random.Range(-1.0f, 1.0f),
                 UnityEngine.Random.Range(-1.0f, 1.0f)) * .8f;
-            force += (targetPositionTrans.position - transform.position) * 1f;
-            force += (forceDirection) * 3.0f;
+            force += (targetPositionTrans.position - transform.position) * 1.5f;
+            force += (forceDirection) * 3.5f;
             rb.AddForce(force, ForceMode.Impulse);
         }
         
