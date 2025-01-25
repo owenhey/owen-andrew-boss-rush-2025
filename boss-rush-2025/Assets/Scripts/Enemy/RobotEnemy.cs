@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class RobotEnemy : Enemy {
@@ -24,9 +25,13 @@ public class RobotEnemy : Enemy {
     public Transform behindPlayerTarget;
     public Transform head;
     public Transform headCenter;
+    public Transform smile;
+    public DamageInstance laser;
+    public Transform laserParent;
 
     private void Start() {
         behindPlayerTarget.SetParent(null, true);
+        laser.gameObject.SetActive(false);
     }
     
     protected override void OnUpdate() {
@@ -41,6 +46,8 @@ public class RobotEnemy : Enemy {
 
             if (attacking) {
                 MoveAttackThing(false);
+                head.LookAt(behindPlayerTarget);
+                laserParent.transform.localScale = Vector3.one + Vector3.one * (Mathf.Sin(Time.time * 10) * .1f);
             }
 
             if (knockedBack) {
@@ -111,6 +118,8 @@ public class RobotEnemy : Enemy {
         base.HandleCombatStart();
         nextMove = Time.time + firstMoveTime;
         nextAttack = Time.time + firstAttackTime;
+
+        smile.DOLocalRotate(new Vector3(0, 0, 180), .35f);
         ShouldMove = false;
     }
     
@@ -128,6 +137,8 @@ public class RobotEnemy : Enemy {
         
         behindPlayerTarget.gameObject.SetActive(true);
         MoveAttackThing(true);
+        head.LookAt(behindPlayerTarget.position);
+        laser.gameObject.SetActive(true);
         yield return new WaitForSeconds(attackDuration);
         behindPlayerTarget.gameObject.SetActive(true);
     }
