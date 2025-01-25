@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     protected float knockbackFactorCode = 1.0f;
     public CharacterController cc;
 
-    private Vector3 knockbackTarget;
+    protected Vector3 knockbackTarget;
     protected bool knockedBack = false;
 
     protected Vector3 targetPosition;
@@ -44,6 +44,9 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     private Tween currentKnockback;
 
+    protected Vector3 velTarget;
+    private Vector3 velVel;
+
     [TextArea(2,2)]
     public List<string> possibleEnterBossZoneMessages;
 
@@ -65,6 +68,8 @@ public class Enemy : MonoBehaviour, IDamagable {
     
     protected virtual void Move() {
         transformTarget.position = Vector3.SmoothDamp(cc.transform.position, targetPosition, ref vel, damping, speed * speedFactor);
+        
+        velTarget = Vector3.SmoothDamp(velTarget, (targetPosition - transform.position), ref velVel, damping, speed * speedFactor);
 
         Vector3 towards = (transformTarget.position - cc.transform.position);
         if (towards != Vector3.zero) {
