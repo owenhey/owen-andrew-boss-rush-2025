@@ -331,6 +331,7 @@ public class Movement : MonoBehaviour {
     }
 
     private float lastTimeHop = 0;
+    private float lastFootStep = 0;
     private bool hopping = false;
     private float hopStop = -1;
     private bool stopped = true;
@@ -362,10 +363,19 @@ public class Movement : MonoBehaviour {
             groundEffectPS.Play();
         }
 
+        if (!hopping) {
+            Sound.I.PlayFootstep();
+            lastFootStep = Time.time;
+        }
         hopping = true;
         stopped = false;
         modelTrans.localPosition = Vector3.up * newY;
 
+        if (hopping && !stopped && Time.time > lastFootStep + Mathf.PI / hopTime) {
+            Sound.I.PlayFootstep();
+            lastFootStep = Time.time;
+        }
+        
         leg1transform.localEulerAngles = new Vector3(0, 0, Mathf.Sin(t * legTime) * 20);
         leg2transform.localEulerAngles = new Vector3(0, 0, Mathf.Sin(t * legTime) * -20);
     }

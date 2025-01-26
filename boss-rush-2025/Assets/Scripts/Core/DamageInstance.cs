@@ -65,6 +65,7 @@ public class DamageInstance : MonoBehaviour {
 
                 if (IsFromPlayer) {
                     PlayerAttacks.BriefPause(swingDuration);
+                    Sound.I.PlayHit();
                     swingDuration = Mathf.Clamp(swingDuration - .02f, 0, 1.0f);
                 }
                 

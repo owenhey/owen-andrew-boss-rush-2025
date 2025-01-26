@@ -29,7 +29,7 @@ public class LittleSpider : MonoBehaviour {
     public int direction = 1;
     
     private void Start() {
-        currentCol = Random.Range(0, 6);
+        currentCol = Random.Range(0, 5);
         currentTarget = points[row].points[GetIndex(currentCol + direction)];
         
         damage.OnHit += OnHit;

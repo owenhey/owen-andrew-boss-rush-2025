@@ -109,6 +109,7 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
     private void FirstAttack() {
+        Sound.I.PlaySwing1();
         Movement.Attacking = true;
         currentAttack = StrikePhase.first;
         nextPhase = StrikePhase.second;
@@ -153,6 +154,7 @@ public class PlayerAttacks : MonoBehaviour {
     }
 
     private void SecondAttack() {
+        Sound.I.PlaySwing1();
         Movement.Attacking = true;
         currentAttack = StrikePhase.second;
         nextPhase = StrikePhase.third;
@@ -202,6 +204,7 @@ public class PlayerAttacks : MonoBehaviour {
     }
     
     private void ThirdAttack() {
+        Sound.I.PlaySwing2();
         Movement.Attacking = true;
         currentAttack = StrikePhase.third;
         nextPhase = StrikePhase.second;

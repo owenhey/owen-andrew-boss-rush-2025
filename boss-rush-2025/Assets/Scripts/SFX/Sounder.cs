@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 
 public class Sounder : MonoBehaviour {
@@ -8,7 +9,16 @@ public class Sounder : MonoBehaviour {
     
     private AudioSource[] _sources;
 
-    private void Awake() {
+    public List<AudioClip> sources;
+
+    private void Start() {
+        if (sources != null) {
+            foreach (var source in sources) {
+                var newSource = gameObject.AddComponent<AudioSource>();
+                newSource.clip = source;
+                newSource.outputAudioMixerGroup = GameManager.instance.mixer;
+            }
+        }
         _sources = GetComponentsInChildren<AudioSource>();
         foreach (var source in _sources) {
             source.loop = false;

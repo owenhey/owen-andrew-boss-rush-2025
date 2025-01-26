@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +8,8 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance;
 
     public InputActionAsset actions;
+
+    public AudioMixerGroup mixer;
 
     private void Awake() {
         instance = this;

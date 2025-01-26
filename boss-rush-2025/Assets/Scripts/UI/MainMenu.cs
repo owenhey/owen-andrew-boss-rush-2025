@@ -37,7 +37,7 @@ public class MainMenu : MonoBehaviour {
     
     public void Play() {
         dof.active = false;
-        pixelMat.DOFloat(150, "_mindistance", 3.0f).SetEase(Ease.InQuart);
+        pixelMat.SetFloat("_mindistance", 150);
         GameManager.instance.EnableGameplay();
         
         mainMenuCanvas.SetActive(false);
