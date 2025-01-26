@@ -194,6 +194,9 @@ public class Movement : MonoBehaviour {
     }
 
     void Update() {
+        if (Input.GetKeyDown(KeyCode.T)) {
+            TextPopups.Instance.Get().PopupAbove("Tottenham just won a game!", transform).SetColor(Color.blue);
+        }
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
 
