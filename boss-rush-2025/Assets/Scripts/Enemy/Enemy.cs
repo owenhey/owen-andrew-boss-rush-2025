@@ -143,7 +143,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         currentKnockback = DOTween.To(() => x, (y) => {
             var dV = y - cc.transform.position;
             cc.Move(dV);
-        }, knockbackTarget, .3f * knockBackFactor).SetEase(Ease.OutQuad).OnComplete(() => {
+        }, knockbackTarget, .4f * knockBackFactor).SetEase(Ease.OutQuad).OnComplete(() => {
             knockedBack = false;
         });
     }

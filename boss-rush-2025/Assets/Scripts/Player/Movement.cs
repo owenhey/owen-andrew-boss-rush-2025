@@ -108,7 +108,7 @@ public class Movement : MonoBehaviour {
             RaycastHit hit;
             Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
         
-            if (false && Physics.Raycast(ray, out hit, 100, groundLayerMask)) {
+            if (Physics.Raycast(ray, out hit, 100, groundLayerMask)) {
                 // Face towards this direction
                 Vector3 towardsMouse = hit.point - playerCC.transform.position;
                 towardsMouse.y = 0;
