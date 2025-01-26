@@ -1,9 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
     public static GameManager instance;
+
+    public InputActionAsset actions;
 
     private void Awake() {
         instance = this;
@@ -13,6 +16,18 @@ public class GameManager : MonoBehaviour {
 
     private void OnDestroy() {
         PlayerHealth.OnDie -= Reset;
+    }
+
+    public void EnableGameplay() {
+        Debug.Log("Enabling: Gameplay");
+        actions.FindActionMap("Player").Enable();
+        actions.FindActionMap("UI").Disable();
+    }
+
+    public void EnableUI() {
+        Debug.Log("Enabling: UI");
+        actions.FindActionMap("Player").Disable();
+        actions.FindActionMap("UI").Enable();
     }
     
     public void Reset() {
