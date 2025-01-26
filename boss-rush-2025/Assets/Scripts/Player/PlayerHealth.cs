@@ -17,14 +17,27 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
     private float currentHealth;
     public float CurrentHealth => currentHealth;
 
+    private bool dead = false;
+
     private void Awake() {
         currentHealth = MaxHealth;
     }
 
+    private void Update() {
+        if (dead) return;
+        if (Input.GetKeyDown(KeyCode.K)) {
+            TakeDamage(1000, transform);
+        }
+    }
+
     public void TakeDamage(float damage, Transform source) {
+        if (dead) return;
+        
         movement.Knockback(source);
 
-        TextPopups.Instance.Get().PopupAbove(damage.ToString(), movement.transform.position + Vector3.up, .3f).SetColor(Color.red);
+        Vector3 lerped = Vector3.Lerp(movement.transform.position + Vector3.up, source.position, .5f);
+
+        TextPopups.Instance.Get().PopupAbove(damage.ToString(), lerped, .3f).SetColor(Color.red);
 
         currentHealth -= damage;
         OnTakeDamage?.Invoke(-damage, currentHealth);
@@ -36,11 +49,16 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
     }
 
     private void Die(Vector3 direction) {
+        if (dead) return;
+        
+        dead = true;
         OnDie?.Invoke();
         movement.BlowUp(direction.normalized);
     }
 
     private void ScreenShake() {
+        if (dead) return;
+        
         var noise = GameObject.FindFirstObjectByType<CinemachineBasicMultiChannelPerlin>();
         shakeTween?.Kill();
         shakeTween = DOTween.To(() => noise.AmplitudeGain, (x) => noise.AmplitudeGain = x, 0, shakeDuration)

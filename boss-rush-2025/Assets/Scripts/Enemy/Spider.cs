@@ -103,7 +103,7 @@ public class Spider : Enemy {
         float healthPercent = CurrentHealth / maxHealth;
         if (healthPercent < .75f && numSmallSpiders == 0) {
             smallSpiders[0].gameObject.SetActive(true);
-            smallSpiders[0].row = randomRowStart % 7;
+            smallSpiders[0].row = randomRowStart % 6;
             smallSpiders[0].transform.SetParent(null, true);
             smallSpiders[0].speed *= Random.Range(1.0f, 1.5f);
             
@@ -112,7 +112,7 @@ public class Spider : Enemy {
         }
         else if (healthPercent < .55f && numSmallSpiders == 1) {
             smallSpiders[1].gameObject.SetActive(true);
-            smallSpiders[1].row = randomRowStart % 7;
+            smallSpiders[1].row = randomRowStart % 6;
             smallSpiders[1].transform.SetParent(null, true);
             smallSpiders[1].speed *= Random.Range(1.0f, 1.5f);
             smallSpiders[1].direction = -1;
@@ -124,7 +124,7 @@ public class Spider : Enemy {
             smallSpiders[2].gameObject.SetActive(true);
             smallSpiders[2].transform.SetParent(null, true);
             
-            smallSpiders[2].row = randomRowStart % 7;
+            smallSpiders[2].row = randomRowStart % 6;
             smallSpiders[2].speed *= Random.Range(1.0f, 1.5f);
             numSmallSpiders++;
         }

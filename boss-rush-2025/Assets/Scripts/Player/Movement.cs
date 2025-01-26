@@ -1,7 +1,8 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Random = System.Random;
+using Random = UnityEngine.Random;
 
 public class Movement : MonoBehaviour {
     public CharacterController playerCC;
@@ -175,9 +176,12 @@ public class Movement : MonoBehaviour {
     private float knockEnd = -1;
     private float knockStart;
     private Vector3 knockStartPoint;
+
+    private bool forceMoving = false;
     
     public void Knockback(Transform source) {
-        TextPopups.Instance.Get().PopupAbove("Ouch!", transform, .5f);
+        string[] possibleDamageText = new string[] {"Ouch!", "Youch!", "Oof", "Yip!", "Ow!", "Owww!"};
+        TextPopups.Instance.Get().PopupAbove(possibleDamageText[Random.Range(0, possibleDamageText.Length)], transform, .5f);
         gettingKnocked = true;
         
         Vector3 towards = transform.position - source.position;
@@ -191,6 +195,16 @@ public class Movement : MonoBehaviour {
         knockStartPoint = transform.position;
         knockPoint = transform.position + (knockbackForce * towards);
         targetPositionTrans.position = knockPoint;
+    }
+
+    public void MoveToLocation(Vector3 position, float time) {
+        forceMoving = true;
+        playerCC.enabled = false;
+        transform.DOLookAt(position, .25f);
+        transform.DOMove(position, time).OnComplete(() => {
+            forceMoving = false;
+            playerCC.enabled = true;
+        });
     }
 
     void Update() {
@@ -273,7 +287,11 @@ public class Movement : MonoBehaviour {
         if (stopInput) {
             input = Vector3.zero;
         }
-        
+
+        if (forceMoving) {
+            input = Vector3.zero;
+        }
+
         Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, camForwardNoZ);
         Vector3 move = rotation * input * speed;
 
@@ -295,16 +313,23 @@ public class Movement : MonoBehaviour {
             lastMoveDirection = towards.normalized;
             lastMoveDirection.y = 0;
         }
+
+        if (forceMoving) {
+            magnitude = 1;
+        }
+        
         Hop(magnitude);
 
-        if (playerAttacks.midSwing == false) {
+        if (playerAttacks.midSwing == false && !forceMoving) {
             // Rotate towards the last movement direction
             Quaternion targetRotation = Quaternion.LookRotation(lastMoveDirection);
             playerCC.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 20);
         }
         // Rotate towards the last movement direction
         towards.y = -1;
-    
+        if (forceMoving) {
+            return;
+        }
         playerCC.Move(towards * (speed * Time.deltaTime));
     }
 

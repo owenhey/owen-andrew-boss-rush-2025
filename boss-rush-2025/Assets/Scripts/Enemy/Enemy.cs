@@ -49,6 +49,15 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     [TextArea(2,2)]
     public List<string> possibleEnterBossZoneMessages;
+    
+    [TextArea(2,2)]
+    public List<string> possiblePlayerKilledMessages;
+    
+    [TextArea(2,2)]
+    public List<string> possiblePlayerStartCombatMessages;
+    
+    [TextArea(2,2)]
+    public List<string> possibleStartCombatLines;
 
     protected virtual void Awake() {
         transformTarget.parent = null;
@@ -99,8 +108,6 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         if (!InCombat) {
             InCombat = true;
-            TextPopups.Instance.Get().PopupAbove("Die!!!", player.transform, 1.0f);
-            TextPopups.Instance.Get().PopupAbove(combatStartText, transform, 2.0f, .5f);
             HandleCombatStart();
         }
 
@@ -124,6 +131,8 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
 
     protected virtual void HandleCombatStart() {
+        HandlePlayerFirstAttack();
+        PlayBossEnterCombatLines();
         if (useBossHealthBar) {
             BossHealthBar.instance.Setup(this);
         }
@@ -134,6 +143,20 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         var randomString = possibleEnterBossZoneMessages[Random.Range(0, possibleEnterBossZoneMessages.Count)];
         TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.0f);
+    }
+
+    public virtual void HandlePlayerFirstAttack() {
+        if (possiblePlayerStartCombatMessages == null || possiblePlayerStartCombatMessages.Count == 0) return;
+
+        var randomString = possiblePlayerStartCombatMessages[Random.Range(0, possiblePlayerStartCombatMessages.Count)];
+        TextPopups.Instance.Get().PopupAbove(randomString, player.transform.position, 1.5f);
+    }
+    
+    public virtual void PlayBossEnterCombatLines() {
+        if (possibleStartCombatLines == null || possibleStartCombatLines.Count == 0) return;
+
+        var randomString = possibleStartCombatLines[Random.Range(0, possibleStartCombatLines.Count)];
+        TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.0f, .7f);
     }
 
     private void Knockback() {
@@ -150,5 +173,12 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     private float CalcKnockback(float damage) {
         return Mathf.Max(.5f, damage / 10);
+    }
+
+    public void SayPlayerDeathText() {
+        if (possiblePlayerKilledMessages == null || possiblePlayerKilledMessages.Count == 0) return;
+        
+        var randomString = possiblePlayerKilledMessages[Random.Range(0, possiblePlayerKilledMessages.Count)];
+        TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, .5f);
     }
 }
