@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -10,36 +11,40 @@ public class MainMenu : MonoBehaviour {
     public GameObject hudCanvas;
     public GameObject mainMenuCanvas;
 
-    public GameObject volume;
-    public DepthOfField dof;
+    public Volume volume;
+    public VolumeProfile mainProfile;
+    public VolumeProfile gameProfile;
 
     public GameObject mainMenuCam;
 
     public Camera cam;
     public Material pixelMat;
 
-    private void Awake() {
-        VolumeProfile volumeProfile = volume.GetComponent<Volume>()?.profile;
-        if(!volumeProfile) throw new System.NullReferenceException(nameof(VolumeProfile));
-
-        if(!volumeProfile.TryGet(out dof)) throw new System.NullReferenceException(nameof(dof));
-    }
-
     private void Start() {
         Reset();
     }
 
     private void Reset() {
-        GameManager.instance.EnableUI();
         pixelMat.SetFloat("_mindistance", 7);
-        dof.active = true;
+
+        volume.profile = mainProfile;
+
+        StartCoroutine(ResetC());
+    }
+
+    private IEnumerator ResetC() {
+        yield return null;
+        GameManager.instance.EnableGameplay();
+        GameManager.instance.EnableUI();
     }
     
     public void Play() {
-        dof.active = false;
+        Debug.Log("playing!");
         pixelMat.SetFloat("_mindistance", 150);
         GameManager.instance.EnableGameplay();
         
+        volume.profile = gameProfile;
+
         mainMenuCanvas.SetActive(false);
         hudCanvas.SetActive(true);
         gameCanvas.SetActive(true);

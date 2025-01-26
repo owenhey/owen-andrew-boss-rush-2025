@@ -6,10 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
     public static GameManager instance;
-
-    public InputActionAsset actions;
-
     public AudioMixerGroup mixer;
+
+    public PlayerInput input;
 
     private void Awake() {
         instance = this;
@@ -23,16 +22,14 @@ public class GameManager : MonoBehaviour {
 
     public void EnableGameplay() {
         Debug.Log("Enabling: Gameplay");
-        actions.FindActionMap("Player").Enable();
-        actions.FindActionMap("UI").Disable();
+        input.SwitchCurrentActionMap("Player");
     }
 
     public void EnableUI() {
         Debug.Log("Enabling: UI");
-        actions.FindActionMap("Player").Disable();
-        actions.FindActionMap("UI").Enable();
+        input.SwitchCurrentActionMap("UI");
     }
-    
+
     public void Reset() {
         StartCoroutine(delayRestart());
 

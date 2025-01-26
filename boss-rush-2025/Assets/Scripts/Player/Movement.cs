@@ -194,15 +194,10 @@ public class Movement : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.T)) {
-            TextPopups.Instance.Get().PopupAbove("Tottenham just won a game!", transform).SetColor(Color.blue);
-        }
+        if (Time.time < .1f) return;
+        
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
-
-        if (Input.GetKeyDown(KeyCode.G)) {
-            BlowUp(Vector3.zero);
-        }
 
         if (Cutscened) return;
         if (gettingKnocked) {

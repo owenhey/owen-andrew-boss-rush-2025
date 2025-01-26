@@ -13,7 +13,7 @@ public class PlayerAttacks : MonoBehaviour {
 
     public TrailRenderer trail;
 
-    public InputActionReference attackAction;
+    public PlayerInput playerInput;
 
     public Material trailMat;
 
@@ -64,11 +64,11 @@ public class PlayerAttacks : MonoBehaviour {
     }
     
     private void OnEnable() {
-        attackAction.action.started += Attack;
+        playerInput.actions["Attack"].started += Attack;
     }
 
     private void OnDisable() {
-        attackAction.action.started -= Attack;
+        playerInput.actions["Attack"].started -= Attack;
     }
 
     public static void BriefPause(float pauseDuration) {
@@ -96,6 +96,7 @@ public class PlayerAttacks : MonoBehaviour {
     }
     
     private void Attack(InputAction.CallbackContext obj) {
+        if (Time.time < .1f) return;
         if (midSwing) return;
         if (nextPhase == StrikePhase.first) {
             FirstAttack();
