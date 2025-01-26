@@ -1,4 +1,4 @@
-using System;
+using DG.Tweening;
 using UnityEngine;
 
 public class RobotCamera : MonoBehaviour {
@@ -8,7 +8,6 @@ public class RobotCamera : MonoBehaviour {
     public GameObject outsideEnv;
 
     public bool outsideCollider;
-    
 
     private void OnTriggerEnter(Collider other) {
         if (other.TryGetComponent(out Movement m)) {

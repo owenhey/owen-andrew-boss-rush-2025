@@ -37,6 +37,7 @@ public class RobotEnemy : Enemy {
     public Transform laserParent;
     public Transform spinLaserInstance;
     public Transform spinParent;
+    public Transform walls;
 
     [ColorUsage(true, true)] public Color regLaserColor;
     [ColorUsage(true, true)] public Color activeLaserColor;
@@ -161,6 +162,8 @@ public class RobotEnemy : Enemy {
 
         smile.DOLocalRotate(new Vector3(0, 0, 180), .5f);
         ShouldMove = false;
+
+        walls.DOScale(Vector3.one, .35f);
     }
     
     private void LookAt(Vector3 target) {
