@@ -34,9 +34,6 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     protected Movement player;
 
-    [Header("Flavor")] [SerializeField] 
-    [TextArea(3, 3)] private string combatStartText;
-    [TextArea(3, 3)] private string playerStartCombatText;
     public Color hitColor = Color.white;
 
     public Action<float, float> OnChangeHealth;
@@ -47,6 +44,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     protected Vector3 velTarget;
     private Vector3 velVel;
 
+    [Header("Flavor")] [SerializeField] 
     [TextArea(2,2)]
     public List<string> possibleEnterBossZoneMessages;
     

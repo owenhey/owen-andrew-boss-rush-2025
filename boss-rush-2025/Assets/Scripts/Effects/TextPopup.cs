@@ -23,7 +23,7 @@ public class TextPopup : MonoBehaviour {
         transform.localScale = Vector3.one;
         Text.text = text;
         Text.fontSize = 4.2f;
-        transform.position = location;
+        transform.position = location + new Vector3(Random.Range(-.25f, .25f), Random.Range(-.25f, .25f), Random.Range(-.25f, .25f));
         transform.DOScale(Vector3.one, .15f).SetDelay(delay).From(Vector3.zero).OnComplete(() => {
             transform.DOScale(Vector3.zero, .15f).SetDelay(duration).OnComplete(() => {
                 gameObject.SetActive(false);
