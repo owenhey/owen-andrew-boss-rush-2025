@@ -204,7 +204,12 @@ public class Movement : MonoBehaviour {
         transform.DOMove(position, time).OnComplete(() => {
             forceMoving = false;
             playerCC.enabled = true;
+            lastMoveDirection = position - transform.position;
+            targetPositionTrans.position = position;
+            _curPlayerTargetLoc.position = position;
+
         });
+        lastMoveDirection = position - transform.position;
     }
 
     void Update() {
@@ -309,7 +314,7 @@ public class Movement : MonoBehaviour {
 
         // Update last movement direction if we're actually moving
         float magnitude = towards.magnitude;
-        if (magnitude > 0.1f) {  // Small threshold to avoid jitter
+        if (magnitude > 0.1f && !forceMoving) {  // Small threshold to avoid jitter
             lastMoveDirection = towards.normalized;
             lastMoveDirection.y = 0;
         }
@@ -322,8 +327,10 @@ public class Movement : MonoBehaviour {
 
         if (playerAttacks.midSwing == false && !forceMoving) {
             // Rotate towards the last movement direction
-            Quaternion targetRotation = Quaternion.LookRotation(lastMoveDirection);
-            playerCC.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 20);
+            if ((lastMoveDirection.magnitude > .1f)) {
+                Quaternion targetRotation = Quaternion.LookRotation(lastMoveDirection);
+                playerCC.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 20);
+            }
         }
         // Rotate towards the last movement direction
         towards.y = -1;

@@ -25,6 +25,8 @@ public class MainMenu : MonoBehaviour {
 
     public Movement movement;
 
+    public IntroCutscene cutscene;
+
     private void Start() {
         Reset();
     }
@@ -75,15 +77,22 @@ public class MainMenu : MonoBehaviour {
         pixelMat.SetFloat("_mindistance", 150);
         
         volume.profile = gameProfile;
+        
+        mainMenuCam.gameObject.SetActive(false);
 
         mainMenuCanvas.SetActive(false);
-        hudCanvas.SetActive(true);
-        gameCanvas.SetActive(true);
+        // hudCanvas.SetActive(true);
+        // gameCanvas.SetActive(true);
         
-        mainMenuCam.SetActive(false);
+        cutscene.Play();
 
-        movement.MoveToLocation(gameLoc.position, 1.5f);
-        Invoke(nameof(EnableGameplay), 1.5f);
+        // Invoke(nameof(EnableGameplay), 1.5f);
+    }
+
+    public void GoToGame() {
+        GameManager.instance.EnableGameplay();
+        hudCanvas.SetActive(true);
+         gameCanvas.SetActive(true);
     }
 
     private void EnableGameplay() {
