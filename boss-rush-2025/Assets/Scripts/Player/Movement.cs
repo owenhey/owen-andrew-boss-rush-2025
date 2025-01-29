@@ -137,6 +137,7 @@ public class Movement : MonoBehaviour {
         if (rolling) return;
         if (Cutscened) return;
         if (gettingKnocked) return;
+        if (forceMoving) return;
 
         gameObject.layer = 8; // No hit layer
         if (Time.time < nextRollAllowed) return;

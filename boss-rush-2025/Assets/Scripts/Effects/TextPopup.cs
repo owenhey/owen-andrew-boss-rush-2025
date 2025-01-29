@@ -60,7 +60,7 @@ public class TextPopup : MonoBehaviour {
     private float previousTime = 0;
     private void Update() {
         if(animating)
-        if (Time.time > previousTime + .03f) {
+        if (Time.time > previousTime + revealSpeed) {
             if (index <= toldText.Length) {
                 Text.text = toldText.Insert(index, "<alpha=#00>") + "</alpha>";
                 index++;

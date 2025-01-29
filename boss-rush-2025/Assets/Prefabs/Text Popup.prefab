@@ -51,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Text: {fileID: 7636490428148538217}
   darkBG: {fileID: 6216804338395262344}
+  revealSpeed: 0.015
 --- !u!1 &6216804338395262344
 GameObject:
   m_ObjectHideFlags: 0

@@ -116,6 +116,7 @@ public class Enemy : MonoBehaviour, IDamagable {
             inBetween += Vector3.up;
         
             knockbackTarget = knockbackFactorCode * knockBackFactor * CalcKnockback(damage) * direction + cc.transform.position;
+            knockbackTarget.y = transform.position.y;
             
             Knockback();
         }
@@ -139,7 +140,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possibleEnemyTalkDuringCombatLines != null && possibleEnemyTalkDuringCombatLines.Count > 0) {
                     var randomString = possibleEnemyTalkDuringCombatLines[Random.Range(0, possibleEnemyTalkDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f));
+                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
 
                     possibleEnemyTalkDuringCombatLines.Remove(randomString);
                 }
@@ -149,7 +150,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possiblePlayerDuringCombatLines != null && possiblePlayerDuringCombatLines.Count > 0) {
                     var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, Random.Range(.5f, 1.0f));
+                    TextPopups.Instance.Get().PopupAbove(randomString, Movement.GetPlayerPos(), 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
 
                     possiblePlayerDuringCombatLines.Remove(randomString);
                 }
@@ -159,7 +160,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possibleEnemyTalkDuringCombatLines != null && possibleEnemyTalkDuringCombatLines.Count > 0) {
                     var randomString = possibleEnemyTalkDuringCombatLines[Random.Range(0, possibleEnemyTalkDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f));
+                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
 
                     possibleEnemyTalkDuringCombatLines.Remove(randomString);
                 }
@@ -169,7 +170,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possiblePlayerDuringCombatLines != null && possiblePlayerDuringCombatLines.Count > 0) {
                     var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, Random.Range(.5f, 1.0f));
+                    TextPopups.Instance.Get().PopupAbove(randomString, Movement.GetPlayerPos(), 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
 
                     possiblePlayerDuringCombatLines.Remove(randomString);
                 }
