@@ -41,9 +41,14 @@ public class MainMenu : MonoBehaviour {
 
     private IEnumerator ResetC() {
         yield return null;
+        
+        GameManager.instance.EnableUI();
+        GameManager.instance.EnableCutscene();
+        GameManager.instance.EnableGameplay();
 
         if (DeathRoutine.DiedBefore) {
             GameManager.instance.EnableUI();
+            GameManager.instance.EnableCutscene();
             GameManager.instance.EnableGameplay();
             movement.transform.SetPositionAndRotation(gameLoc.position, gameLoc.rotation);
             
@@ -75,27 +80,19 @@ public class MainMenu : MonoBehaviour {
     public void Play() {
         Debug.Log("playing!");
         pixelMat.SetFloat("_mindistance", 150);
-        
+        GameManager.instance.EnableCutscene();
         volume.profile = gameProfile;
         
         mainMenuCam.gameObject.SetActive(false);
 
         mainMenuCanvas.SetActive(false);
-        // hudCanvas.SetActive(true);
-        // gameCanvas.SetActive(true);
         
         cutscene.Play();
-
-        // Invoke(nameof(EnableGameplay), 1.5f);
     }
 
     public void GoToGame() {
         GameManager.instance.EnableGameplay();
         hudCanvas.SetActive(true);
-         gameCanvas.SetActive(true);
-    }
-
-    private void EnableGameplay() {
-        GameManager.instance.EnableGameplay();
+        gameCanvas.SetActive(true);
     }
 }

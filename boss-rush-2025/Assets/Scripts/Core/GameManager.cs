@@ -30,6 +30,11 @@ public class GameManager : MonoBehaviour {
         input.SwitchCurrentActionMap("UI");
     }
 
+    public void EnableCutscene() {
+        Debug.Log("Enabling: Cutscene");
+        input.SwitchCurrentActionMap("Cutscene");
+    }
+
     public void Reset() {
         EnableUI();
 

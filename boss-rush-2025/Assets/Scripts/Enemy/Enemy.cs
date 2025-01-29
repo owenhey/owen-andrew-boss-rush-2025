@@ -56,12 +56,31 @@ public class Enemy : MonoBehaviour, IDamagable {
     
     [TextArea(2,2)]
     public List<string> possibleStartCombatLines;
+    
+    
+    [Header("During combat player lines")]
+    [TextArea(2,2)]
+    public List<string> possiblePlayerDuringCombatLines;
+    [TextArea(2,2)]
+    public List<string> possibleEnemyTalkDuringCombatLines;
+
+    private float firstTalkThreshold;
+    private float secondTalkThreshold;
+    private float thirdTalkThreshold;
+    private float fourthTalkThreshold;
+
+    private int talkDuringCombatAmount = 0;
 
     protected virtual void Awake() {
         transformTarget.parent = null;
         player = FindFirstObjectByType<Movement>();
         targetPosition = cc.transform.position;
         currentHealth = maxHealth;
+
+        firstTalkThreshold = Random.Range(.7f, .8f);
+        secondTalkThreshold = Random.Range(.55f, .65f);
+        thirdTalkThreshold = Random.Range(.4f, .5f);
+        fourthTalkThreshold = Random.Range(.2f, .3f);
     }
 
     private void Update() {
@@ -113,6 +132,48 @@ public class Enemy : MonoBehaviour, IDamagable {
         OnChangeHealth?.Invoke(-damage, currentHealth);
         if (currentHealth <= 0) {
             Die();
+        }
+        else {
+            float percentHealth = currentHealth / maxHealth;
+            if (talkDuringCombatAmount == 0 && percentHealth < firstTalkThreshold) {
+                talkDuringCombatAmount++;
+                if (possibleEnemyTalkDuringCombatLines != null && possibleEnemyTalkDuringCombatLines.Count > 0) {
+                    var randomString = possibleEnemyTalkDuringCombatLines[Random.Range(0, possibleEnemyTalkDuringCombatLines.Count)];
+                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f));
+
+                    possibleEnemyTalkDuringCombatLines.Remove(randomString);
+                }
+            }
+            
+            if (talkDuringCombatAmount == 1 && percentHealth < secondTalkThreshold) {
+                talkDuringCombatAmount++;
+                if (possiblePlayerDuringCombatLines != null && possiblePlayerDuringCombatLines.Count > 0) {
+                    var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
+                    TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, Random.Range(.5f, 1.0f));
+
+                    possiblePlayerDuringCombatLines.Remove(randomString);
+                }
+            }
+            
+            if (talkDuringCombatAmount == 2 && percentHealth < thirdTalkThreshold) {
+                talkDuringCombatAmount++;
+                if (possibleEnemyTalkDuringCombatLines != null && possibleEnemyTalkDuringCombatLines.Count > 0) {
+                    var randomString = possibleEnemyTalkDuringCombatLines[Random.Range(0, possibleEnemyTalkDuringCombatLines.Count)];
+                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f));
+
+                    possibleEnemyTalkDuringCombatLines.Remove(randomString);
+                }
+            }
+            
+            if (talkDuringCombatAmount == 3 && percentHealth < fourthTalkThreshold) {
+                talkDuringCombatAmount++;
+                if (possiblePlayerDuringCombatLines != null && possiblePlayerDuringCombatLines.Count > 0) {
+                    var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
+                    TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, Random.Range(.5f, 1.0f));
+
+                    possiblePlayerDuringCombatLines.Remove(randomString);
+                }
+            }
         }
     }
 
