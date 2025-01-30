@@ -26,7 +26,10 @@ public class MainMenu : MonoBehaviour {
     public Movement movement;
 
     public IntroCutscene cutscene;
+    public FinalBossCutscene fcutscene;
 
+    public static bool WentPastCutscene;
+    
     private void Start() {
         Reset();
     }
@@ -46,7 +49,7 @@ public class MainMenu : MonoBehaviour {
         GameManager.instance.EnableCutscene();
         GameManager.instance.EnableGameplay();
 
-        if (DeathRoutine.DiedBefore) {
+        if (WentPastCutscene) {
             GameManager.instance.EnableUI();
             GameManager.instance.EnableCutscene();
             GameManager.instance.EnableGameplay();
@@ -64,16 +67,30 @@ public class MainMenu : MonoBehaviour {
             mainMenuCam.SetActive(false);
         }
         else {
-            GameManager.instance.EnableGameplay();
-            GameManager.instance.EnableUI();
-            movement.transform.SetPositionAndRotation(mainMenuLoc.position, mainMenuLoc.rotation);
+            bool killedAllBosses = GameManager.BlobDefeated && GameManager.RobotDefeated && GameManager.SpiderDefeated;
+            if (killedAllBosses) {
+                fcutscene.gameObject.SetActive(true);
+                fcutscene.Play();
+                
+                GameManager.instance.EnableCutscene();
+                volume.profile = gameProfile;
+        
+                mainMenuCam.gameObject.SetActive(false);
+
+                mainMenuCanvas.SetActive(false);
+            }
+            else {
+                GameManager.instance.EnableGameplay();
+                GameManager.instance.EnableUI();
+                movement.transform.SetPositionAndRotation(mainMenuLoc.position, mainMenuLoc.rotation);
             
         
-            mainMenuCanvas.SetActive(true);
-            hudCanvas.SetActive(false);
-            gameCanvas.SetActive(false);
+                mainMenuCanvas.SetActive(true);
+                hudCanvas.SetActive(false);
+                gameCanvas.SetActive(false);
         
-            mainMenuCam.SetActive(true);
+                mainMenuCam.SetActive(true);
+            }
         }
     }
     
@@ -87,7 +104,9 @@ public class MainMenu : MonoBehaviour {
 
         mainMenuCanvas.SetActive(false);
         
+        cutscene.gameObject.SetActive(true);
         cutscene.Play();
+        WentPastCutscene = true;
     }
 
     public void GoToGame() {

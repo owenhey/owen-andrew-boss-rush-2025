@@ -136,6 +136,8 @@ public class BlobEnemy : Enemy {
                 blob.Kill();
             }
         }
+
+        GameManager.BlobDefeated = true;
     }
 
     protected override void HandleCombatStart() {

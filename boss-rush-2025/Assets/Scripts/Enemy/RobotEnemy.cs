@@ -155,6 +155,11 @@ public class RobotEnemy : Enemy {
         bodyHinge.localRotation = localRotation;
     }
 
+    protected override void Die() {
+        base.Die();
+        GameManager.RobotDefeated = true;
+    }
+
     protected override void HandleCombatStart() {
         base.HandleCombatStart();
         nextMove = Time.time + firstMoveTime;

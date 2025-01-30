@@ -184,6 +184,8 @@ public class Spider : Enemy {
         base.Die();
         exitBlocker.SetActive(false);
 
+        GameManager.SpiderDefeated = true;
+
         foreach (var littlespider in smallSpiders) {
             Destroy(littlespider);
         }

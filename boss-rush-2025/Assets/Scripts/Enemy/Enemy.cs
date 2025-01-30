@@ -184,15 +184,27 @@ public class Enemy : MonoBehaviour, IDamagable {
         Die();
     }
 
+    public BossDieRoutine bossDeathRoutine;
+    
     protected virtual void Die() {
         Destroy(transformTarget.gameObject);
         Destroy(gameObject);
         OnDie?.Invoke();
+
+        if (useBossHealthBar) {
+            bossDeathRoutine.BossKillRoutine(EnemyName);
+            GameManager.lastBossKilled = EnemyName;
+        }
     }
 
     protected virtual void HandleCombatStart() {
         HandlePlayerFirstAttack();
         PlayBossEnterCombatLines();
+        
+        ShowHealthBar();
+    }
+
+    public void ShowHealthBar() {
         if (useBossHealthBar) {
             BossHealthBar.instance.Setup(this);
         }
@@ -223,10 +235,15 @@ public class Enemy : MonoBehaviour, IDamagable {
         currentKnockback?.Kill();
         Vector3 x = cc.transform.position;
         targetPosition = knockbackTarget;
+        transformTarget.position = knockbackTarget;
+        vel = Vector3.zero;
+        
+        
+        
         currentKnockback = DOTween.To(() => x, (y) => {
             var dV = y - cc.transform.position;
             cc.Move(dV);
-        }, knockbackTarget, .4f * knockBackFactor).SetEase(Ease.OutQuad).OnComplete(() => {
+        }, knockbackTarget, .4f * knockBackFactor * knockbackFactorCode).SetEase(Ease.OutQuad).OnComplete(() => {
             knockedBack = false;
         });
     }

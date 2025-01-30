@@ -10,6 +10,12 @@ public class GameManager : MonoBehaviour {
 
     public PlayerInput input;
 
+    public static bool SpiderDefeated;
+    public static bool RobotDefeated;
+    public static bool BlobDefeated;
+
+    public static string lastBossKilled;
+
     private void Awake() {
         instance = this;
 
@@ -33,6 +39,10 @@ public class GameManager : MonoBehaviour {
     public void EnableCutscene() {
         Debug.Log("Enabling: Cutscene");
         input.SwitchCurrentActionMap("Cutscene");
+    }
+
+    public void Restart() {
+        SceneManager.LoadScene(0);
     }
 
     public void Reset() {

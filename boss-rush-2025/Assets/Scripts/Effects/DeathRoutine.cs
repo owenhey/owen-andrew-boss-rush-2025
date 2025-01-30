@@ -22,7 +22,7 @@ public class DeathRoutine : MonoBehaviour {
     private void OnDisable() {
         PlayerHealth.OnDie -= HandleDeath;
     }
-
+    
     private void HandleDeath() {
         CG.gameObject.SetActive(true);
         CG.DOFade(1, 1).From(0).SetDelay(DelayTime).OnStart(() => {
