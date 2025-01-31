@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Enabling: UI");
         input.SwitchCurrentActionMap("UI");
     }
+    
+    public void EnableRock() {
+        Debug.Log("Enabling: RockThrow");
+        input.SwitchCurrentActionMap("RockThrow");
+    }
 
     public void EnableCutscene() {
         Debug.Log("Enabling: Cutscene");

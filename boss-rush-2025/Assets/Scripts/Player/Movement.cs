@@ -424,4 +424,8 @@ public class Movement : MonoBehaviour {
         
         return nextInterval;
     }
+
+    public void ResetTarget() {
+        targetPositionTrans.position = transform.position;
+    }
 }

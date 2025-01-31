@@ -48,6 +48,7 @@ public class MainMenu : MonoBehaviour {
         GameManager.instance.EnableUI();
         GameManager.instance.EnableCutscene();
         GameManager.instance.EnableGameplay();
+        GameManager.instance.EnableRock();
 
         if (WentPastCutscene) {
             GameManager.instance.EnableUI();

@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour, IDamagable {
     protected Vector3 knockbackTarget;
     protected bool knockedBack = false;
 
+    public bool Resettargetonknockback = true;
+
     protected Vector3 targetPosition;
     public Transform transformTarget;
 
@@ -44,6 +46,8 @@ public class Enemy : MonoBehaviour, IDamagable {
     protected Vector3 velTarget;
     private Vector3 velVel;
 
+    public string musicString;
+
     [Header("Flavor")] [SerializeField] 
     [TextArea(2,2)]
     public List<string> possibleEnterBossZoneMessages;
@@ -56,7 +60,8 @@ public class Enemy : MonoBehaviour, IDamagable {
     
     [TextArea(2,2)]
     public List<string> possibleStartCombatLines;
-    
+
+    protected bool canBeDamaged = true;
     
     [Header("During combat player lines")]
     [TextArea(2,2)]
@@ -105,6 +110,8 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     
     public virtual void TakeDamage(float damage, Transform source) {
+        if (!canBeDamaged) return;
+        
         Vector3 inBetween = transform.position + Vector3.up;
         if (knockBackFactor * knockbackFactorCode != 0.0) {
             knockedBack = true;
@@ -200,6 +207,10 @@ public class Enemy : MonoBehaviour, IDamagable {
     protected virtual void HandleCombatStart() {
         HandlePlayerFirstAttack();
         PlayBossEnterCombatLines();
+
+        if (!string.IsNullOrEmpty(musicString)) {
+            Music.I.PlayString(musicString);
+        }
         
         ShowHealthBar();
     }
@@ -234,8 +245,11 @@ public class Enemy : MonoBehaviour, IDamagable {
     private void Knockback() {
         currentKnockback?.Kill();
         Vector3 x = cc.transform.position;
-        targetPosition = knockbackTarget;
-        transformTarget.position = knockbackTarget;
+
+        if (Resettargetonknockback) {
+            targetPosition = knockbackTarget;
+            transformTarget.position = knockbackTarget;
+        }
         vel = Vector3.zero;
         
         

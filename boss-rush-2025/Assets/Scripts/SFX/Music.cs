@@ -14,10 +14,22 @@ public class Music : MonoBehaviour {
     public float fadeTime = .5f;
     
     [SerializeField] private MusicData HubTheme;
+    [SerializeField] private MusicData BlobTheme;
+    [SerializeField] private MusicData SpiderTheme;
 
     private void Awake() {
         I = this;
         Play(HubTheme);
+    }
+
+    public void PlayString(string s) {
+        if (s == "spider") {
+            Play(SpiderTheme);
+        }
+
+        if (s == "blob") {
+            Play(BlobTheme);
+        }
     }
 
     private void Play(MusicData musicData) {

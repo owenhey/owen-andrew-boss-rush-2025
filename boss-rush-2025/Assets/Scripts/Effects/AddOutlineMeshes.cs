@@ -22,6 +22,10 @@ public class AddOutlineMeshes : MonoBehaviour {
             if (renderer.gameObject.layer == 11) {
                 continue;
             }
+
+            if (renderer.CompareTag("dontoutline")) {
+                continue;
+            }
             
             var newObj = Instantiate(renderer.gameObject, renderer.transform);
             var newRenderer = newObj.GetComponent<MeshRenderer>();
