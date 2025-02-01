@@ -226,7 +226,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         PlayBossEnterCombatLines();
 
         if (!string.IsNullOrEmpty(musicString)) {
-            Music.I.PlayString(musicString);
+            Music.I.SwitchToActualTheme(musicString);
         }
         
         ShowHealthBar();
