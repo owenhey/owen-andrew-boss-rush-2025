@@ -9,7 +9,8 @@ public class BossAreaTrigger : MonoBehaviour {
         if (other.gameObject.layer == 7 || other.gameObject.layer == 8) {
             if (trigger) return;
             trigger = true;
-            boss.HandlePlayerEnterBossZone();
+            if(boss)
+                boss.HandlePlayerEnterBossZone();
         }
     }
 }

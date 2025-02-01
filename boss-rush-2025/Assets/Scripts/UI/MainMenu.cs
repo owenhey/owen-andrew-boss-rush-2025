@@ -51,8 +51,10 @@ public class MainMenu : MonoBehaviour {
         GameManager.instance.EnableCutscene();
         GameManager.instance.EnableGameplay();
         GameManager.instance.EnableRock();
-
-        if (WentPastCutscene || true) {
+        
+        Debug.Log("Main 1");
+        bool killedAllBosses = GameManager.BlobDefeated && GameManager.RobotDefeated && GameManager.SpiderDefeated;
+        if (WentPastCutscene && !killedAllBosses) {
             GameManager.instance.EnableUI();
             GameManager.instance.EnableCutscene();
             GameManager.instance.EnableGameplay();
@@ -62,6 +64,7 @@ public class MainMenu : MonoBehaviour {
             GameManager.instance.EnableGameplay();
             
             volume.profile = gameProfile;
+            Debug.Log("Main 2");
             
             mainMenuCanvas.SetActive(false);
             hudCanvas.SetActive(true);
@@ -70,11 +73,12 @@ public class MainMenu : MonoBehaviour {
             mainMenuCam.SetActive(false);
         }
         else {
-            bool killedAllBosses = GameManager.BlobDefeated && GameManager.RobotDefeated && GameManager.SpiderDefeated;
+            Debug.Log("Main 3");
             if (killedAllBosses) {
+                Debug.Log("killed all bosses");
                 fcutscene.gameObject.SetActive(true);
                 fcutscene.Play();
-                
+                Debug.Log("Main 4");
                 GameManager.instance.EnableCutscene();
                 volume.profile = gameProfile;
         
@@ -86,7 +90,7 @@ public class MainMenu : MonoBehaviour {
                 GameManager.instance.EnableGameplay();
                 GameManager.instance.EnableUI();
                 movement.transform.SetPositionAndRotation(mainMenuLoc.position, mainMenuLoc.rotation);
-            
+                Debug.Log("Main 5");
         
                 mainMenuCanvas.SetActive(true);
                 hudCanvas.SetActive(false);
@@ -95,17 +99,6 @@ public class MainMenu : MonoBehaviour {
                 mainMenuCam.SetActive(true);
             }
         }
-        
-        // GameManager.instance.EnableGameplay();
-        // GameManager.instance.EnableUI();
-        // movement.transform.SetPositionAndRotation(mainMenuLoc.position, mainMenuLoc.rotation);
-        //     
-        //
-        // mainMenuCanvas.SetActive(true);
-        // hudCanvas.SetActive(false);
-        // gameCanvas.SetActive(false);
-        //
-        // mainMenuCam.SetActive(true);
     }
     
     public void Play() {

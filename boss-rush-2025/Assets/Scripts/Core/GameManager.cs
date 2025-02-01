@@ -27,22 +27,18 @@ public class GameManager : MonoBehaviour {
     }
 
     public void EnableGameplay() {
-        Debug.Log("Enabling: Gameplay");
         input.SwitchCurrentActionMap("Player");
     }
 
     public void EnableUI() {
-        Debug.Log("Enabling: UI");
         input.SwitchCurrentActionMap("UI");
     }
     
     public void EnableRock() {
-        Debug.Log("Enabling: RockThrow");
         input.SwitchCurrentActionMap("RockThrow");
     }
 
     public void EnableCutscene() {
-        Debug.Log("Enabling: Cutscene");
         input.SwitchCurrentActionMap("Cutscene");
     }
 

@@ -20,7 +20,7 @@ TagManager:
   - dontoutline
   - playerrigidbody
   - enemyalsohit
-  - 
+  - enemynocollide
   - 
   - 
   - 

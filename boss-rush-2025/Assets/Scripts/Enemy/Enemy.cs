@@ -76,6 +76,8 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     private int talkDuringCombatAmount = 0;
 
+    public bool DestroyOnDeath = true;
+    
     protected virtual void Awake() {
         transformTarget.parent = null;
         player = FindFirstObjectByType<Movement>();
@@ -95,6 +97,8 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
 
     private void Update() {
+        if (currentHealth < 0) return;
+        
         OnUpdate();
         if (!knockedBack && ShouldMove) {
             Move();
@@ -119,12 +123,13 @@ public class Enemy : MonoBehaviour, IDamagable {
         if(!force)
             if (!canBeDamaged) return;
         
+        Vector3 direction = cc.transform.position - source.position;
+        direction.y = 0;
+        direction.Normalize();
         Vector3 inBetween = transform.position + Vector3.up;
+        damageTowards = direction;
         if (knockBackFactor * knockbackFactorCode != 0.0) {
             knockedBack = true;
-            Vector3 direction = cc.transform.position - source.position;
-            direction.y = 0;
-            direction.Normalize();
 
             inBetween = (source.transform.position + transform.position) * .5f;
             inBetween += Vector3.up;
@@ -207,10 +212,20 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
 
     public BossDieRoutine bossDeathRoutine;
+
+    protected Vector3 damageTowards;
     
     protected virtual void Die() {
         Destroy(transformTarget.gameObject);
-        Destroy(gameObject);
+        if (DestroyOnDeath) {
+            Destroy(gameObject);
+        }
+        else {
+            InCombat = false;
+            canBeDamaged = false;
+            ShouldMove = false;
+        }
+
         OnDie?.Invoke();
 
         if (useBossHealthBar) {

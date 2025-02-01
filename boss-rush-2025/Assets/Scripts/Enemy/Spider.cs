@@ -47,6 +47,8 @@ public class Spider : Enemy {
     public LittleSpider[] smallSpiders;
 
     private int randomRowStart;
+
+    private RagdollHelper[] _ragdollHelpers;
     
 
     private void Start() {
@@ -54,6 +56,13 @@ public class Spider : Enemy {
             leftLegs[i].spider = rightLegs[i].spider = this;
         }
         randomRowStart = Random.Range(1, 5);
+
+        _ragdollHelpers = GetComponentsInChildren<RagdollHelper>(true);
+        foreach (var ragdoll in _ragdollHelpers) {
+            ragdoll.Disable();
+        }
+        
+        if(GameManager.SpiderDefeated) Destroy(gameObject);
     }
 
     protected override void OnUpdate(){
@@ -86,7 +95,7 @@ public class Spider : Enemy {
                 }
             }
         }
-        
+        LookAt(player.transform.position);
         int count = (int)(Time.time / switchLegTime);
         for (int i = 0; i < leftLegs.Count; i++) {
             bool even = (count + i) % 2 == 0;
@@ -99,7 +108,7 @@ public class Spider : Enemy {
             leftLegs[i].legMoveTime = legMoveTime;
             rightLegs[i].legMoveTime = legMoveTime;
         }
-
+        if (!InCombat) return;
         float healthPercent = CurrentHealth / maxHealth;
         if (healthPercent < .75f && numSmallSpiders == 0) {
             smallSpiders[0].gameObject.SetActive(true);
@@ -128,8 +137,6 @@ public class Spider : Enemy {
             smallSpiders[2].speed *= Random.Range(1.0f, 1.5f);
             numSmallSpiders++;
         }
-        
-        LookAt(player.transform.position);
     }
 
     protected override void HandleCombatStart() {
@@ -188,6 +195,11 @@ public class Spider : Enemy {
 
         foreach (var littlespider in smallSpiders) {
             Destroy(littlespider.gameObject);
+        }
+
+        foreach (var ragdoll in _ragdollHelpers) {
+            ragdoll.Enable();
+            ragdoll.Push(damageTowards);
         }
     }
 

@@ -47,6 +47,7 @@ public class RobotEnemy : Enemy {
 
     private List<(Transform, DamageInstance)> spinAttacks = new();
 
+    private RagdollHelper[] _ragdollHelpers;
     private void Start() {
         behindPlayerTarget.SetParent(null, true);
         laser.gameObject.SetActive(false);
@@ -59,6 +60,13 @@ public class RobotEnemy : Enemy {
             newLaser.transform.localEulerAngles = new Vector3(0, (i + 1) * rotation, 0);
             spinAttacks.Add((newLaser.transform, newLaser.GetComponentInChildren<DamageInstance>(true)));
         }
+        
+        _ragdollHelpers = GetComponentsInChildren<RagdollHelper>(true);
+        foreach (var ragdoll in _ragdollHelpers) {
+            ragdoll.Disable();
+        }
+        
+        if(GameManager.RobotDefeated) Destroy(gameObject);
     }
     
     protected override void OnUpdate() {
@@ -158,6 +166,14 @@ public class RobotEnemy : Enemy {
     protected override void Die() {
         base.Die();
         GameManager.RobotDefeated = true;
+        
+        Destroy(laserParent.gameObject);
+        Destroy(spinParent.gameObject);
+        
+        foreach (var ragdoll in _ragdollHelpers) {
+            ragdoll.Enable();
+            ragdoll.Push(damageTowards);
+        }
     }
 
     protected override void HandleCombatStart() {

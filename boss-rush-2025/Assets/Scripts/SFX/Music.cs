@@ -52,7 +52,7 @@ public class Music : MonoBehaviour {
     }
 
     public void FadeOut() {
-        MusicSource.DOFade(0, fadeTime);
+        Boss2Source.DOFade(0, fadeTime);
     }
 
     public void SwitchToActualTheme(string bossName) {
@@ -72,10 +72,10 @@ public class Music : MonoBehaviour {
         }
 
         MusicSource.clip = ac;
-        MusicSource.DOFade(0, 2);
+        MusicSource.DOFade(0, 3);
 
         Boss2Source.time = currentTime;
-        Boss2Source.DOFade(musicVolume, 2).From(0);
+        Boss2Source.DOFade(musicVolume, 3).From(0);
         Boss2Source.Play();
     }
 

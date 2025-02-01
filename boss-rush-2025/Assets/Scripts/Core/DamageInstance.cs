@@ -84,7 +84,6 @@ public class DamageInstance : MonoBehaviour {
             numHit = Physics.OverlapSphereNonAlloc(transform.position, sphereCollider.radius, hitColliders);
         }
         if (col is CapsuleCollider capsuleCollider) {
-            Debug.Log("ER");
             // Perform the capsule overlap check
             numHit = Physics.OverlapCapsuleNonAlloc(capsulePoint1.position, capsulePoint2.position, .4f, hitColliders);
         }
