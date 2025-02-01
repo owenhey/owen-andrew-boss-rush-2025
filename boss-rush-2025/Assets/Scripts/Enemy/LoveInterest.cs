@@ -76,6 +76,10 @@ public class LoveInterest : Enemy {
     protected override void OnUpdate() {
         base.OnUpdate();
 
+        if (ShouldMove && !knockedBack) {
+            Hop((targetPosition - transform.position).magnitude);
+        }
+
         if (inMiddleThing) {
             return;
         }
@@ -87,7 +91,7 @@ public class LoveInterest : Enemy {
         if (swingPhase < 4) {
             LookAt(player.transform.position);
         }
-
+        
         if (swingPhase < 1) {
             Vector3 towardsPlayer = player.transform.position - transform.position;
             towardsPlayer.y = 0;
@@ -252,6 +256,7 @@ public class LoveInterest : Enemy {
         
         nextSpinSpawn = Time.time + 10.0f;
         
+        
         foreach (var rockEnemy in rocks) {
             if (rockEnemy != null) {
                 Destroy(rockEnemy.gameObject);
@@ -385,5 +390,69 @@ public class LoveInterest : Enemy {
     public static float RemapClamp(float value, float startLow, float startHigh, float endLow, float endHigh) {
         value = Mathf.Clamp(value, startLow, startHigh);
         return endLow + ((endHigh - endLow) / (startHigh - startLow)) * (value - startLow);
+    }
+    
+    private float hopTime = 7;
+    private float hopHeight = .4f;
+    public Transform leg1transform;
+    public Transform leg2transform;
+    public Transform modelTrans;
+    
+    private float lastTimeHop = 0;
+    private float lastFootStep = 0;
+    private bool hopping = false;
+    private float hopStop = -1;
+    private bool stopped = true;
+    private void Hop(float magnitude) {
+        float t = Time.time - lastTimeHop;
+        float tTimesHopTime = t * hopTime;
+        float newY = Mathf.Abs(Mathf.Sin(tTimesHopTime)) * hopHeight;
+        if (magnitude < .3f) {  
+            leg1transform.localEulerAngles = Vector3.zero;
+            leg2transform.localEulerAngles = Vector3.zero;
+            
+            if (hopping) {
+                hopStop = FindNextInterval(t, Mathf.PI / hopTime);
+                hopping = false;
+            }
+            
+            if (t < hopStop && !stopped) {
+                modelTrans.localPosition = Vector3.up * newY;
+            }
+            else {
+                stopped = true;
+                lastTimeHop = Time.time;
+            }
+            return;
+        }
+
+
+        if (!hopping) {
+            lastFootStep = Time.time;
+        }
+        hopping = true;
+        stopped = false;
+        modelTrans.localPosition = Vector3.up * newY;
+
+        if (hopping && !stopped && Time.time > lastFootStep + Mathf.PI / hopTime) {
+            lastFootStep = Time.time;
+        }
+        
+        leg1transform.localEulerAngles = new Vector3(Mathf.Sin(t * 7) * 20, 0, 0);
+        leg2transform.localEulerAngles = new Vector3(Mathf.Sin(t * 7) * -20, 0, 0);
+    }
+    
+    private float FindNextInterval(float number, float interval)
+    {
+        float intervals = (float)Math.Ceiling(number / interval);
+        float nextInterval = intervals * interval;
+        
+        // If the calculated interval equals the input number,
+        // move to the next interval
+        if (Math.Abs(nextInterval - number) < .01f) {
+            return number;
+        }
+        
+        return nextInterval;
     }
 }

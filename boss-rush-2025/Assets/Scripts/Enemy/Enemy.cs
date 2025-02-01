@@ -119,8 +119,6 @@ public class Enemy : MonoBehaviour, IDamagable {
         if(!force)
             if (!canBeDamaged) return;
         
-        Debug.Log(damage);
-        
         Vector3 inBetween = transform.position + Vector3.up;
         if (knockBackFactor * knockbackFactorCode != 0.0) {
             knockedBack = true;

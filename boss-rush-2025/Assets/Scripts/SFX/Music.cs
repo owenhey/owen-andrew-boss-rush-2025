@@ -21,6 +21,10 @@ public class Music : MonoBehaviour {
     [SerializeField] private MusicData RobotTheme;
     [SerializeField] private MusicData RobotThemeIntro;
 
+    public float musicVolume = .5f;
+
+    public AudioSource Boss2Source;
+
     private void Awake() {
         I = this;
         PlayHub();
@@ -33,14 +37,17 @@ public class Music : MonoBehaviour {
     public void PlayStringIntro(string s) {
         if (s == "spider") {
             Play(SpiderThemeIntro);
+            Boss2Source.clip = SpiderTheme.track;
         }
 
         if (s == "blob") {
             Play(BlobThemeIntro);
+            Boss2Source.clip = BlobTheme.track;
         }
         
         if (s == "robot") {
             Play(RobotThemeIntro);
+            Boss2Source.clip = RobotTheme.track;
         }
     }
 
@@ -65,8 +72,11 @@ public class Music : MonoBehaviour {
         }
 
         MusicSource.clip = ac;
-        MusicSource.time = currentTime;
-        MusicSource.Play();
+        MusicSource.DOFade(0, 2);
+
+        Boss2Source.time = currentTime;
+        Boss2Source.DOFade(musicVolume, 2).From(0);
+        Boss2Source.Play();
     }
 
     private void Play(MusicData musicData) {
@@ -74,13 +84,13 @@ public class Music : MonoBehaviour {
             MusicSource.DOFade(0, fadeTime).OnComplete(() => {
                 MusicSource.clip = musicData.track;
                 MusicSource.Play();
-                MusicSource.DOFade(musicData.volume, fadeTime).From(0);
+                MusicSource.DOFade(musicVolume, fadeTime).From(0);
             });
         }
         else {
             MusicSource.clip = musicData.track;
             MusicSource.Play();
-            MusicSource.DOFade(musicData.volume, fadeTime).From(0);
+            MusicSource.DOFade(musicVolume, fadeTime).From(0);
         }
     }
 }
