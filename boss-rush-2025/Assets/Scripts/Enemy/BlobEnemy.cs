@@ -120,7 +120,6 @@ public class BlobEnemy : Enemy {
             if (towardsBlob.magnitude > disToPlayer) continue;
             
             float dot = Vector3.Dot(towardsPlayer.normalized, towardsBlob.normalized);
-            Debug.Log(dot);
             if (dot > .5f) {
                 blob.Jump();
             }

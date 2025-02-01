@@ -32,6 +32,10 @@ public class Music : MonoBehaviour {
         }
     }
 
+    public void FadeOut() {
+        MusicSource.DOFade(0, fadeTime);
+    }
+
     private void Play(MusicData musicData) {
         if (MusicSource.isPlaying) {
             MusicSource.DOFade(0, fadeTime).OnComplete(() => {

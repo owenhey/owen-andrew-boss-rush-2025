@@ -45,12 +45,14 @@ public class MainMenu : MonoBehaviour {
     private IEnumerator ResetC() {
         yield return null;
         
+        mainMenuCam.gameObject.SetActive(true);
+        
         GameManager.instance.EnableUI();
         GameManager.instance.EnableCutscene();
         GameManager.instance.EnableGameplay();
         GameManager.instance.EnableRock();
 
-        if (WentPastCutscene) {
+        if (WentPastCutscene || true) {
             GameManager.instance.EnableUI();
             GameManager.instance.EnableCutscene();
             GameManager.instance.EnableGameplay();
@@ -58,13 +60,13 @@ public class MainMenu : MonoBehaviour {
             
             pixelMat.SetFloat("_mindistance", 150);
             GameManager.instance.EnableGameplay();
-        
+            
             volume.profile = gameProfile;
-
+            
             mainMenuCanvas.SetActive(false);
             hudCanvas.SetActive(true);
             gameCanvas.SetActive(true);
-        
+            
             mainMenuCam.SetActive(false);
         }
         else {
@@ -77,7 +79,7 @@ public class MainMenu : MonoBehaviour {
                 volume.profile = gameProfile;
         
                 mainMenuCam.gameObject.SetActive(false);
-
+        
                 mainMenuCanvas.SetActive(false);
             }
             else {
@@ -93,6 +95,17 @@ public class MainMenu : MonoBehaviour {
                 mainMenuCam.SetActive(true);
             }
         }
+        
+        // GameManager.instance.EnableGameplay();
+        // GameManager.instance.EnableUI();
+        // movement.transform.SetPositionAndRotation(mainMenuLoc.position, mainMenuLoc.rotation);
+        //     
+        //
+        // mainMenuCanvas.SetActive(true);
+        // hudCanvas.SetActive(false);
+        // gameCanvas.SetActive(false);
+        //
+        // mainMenuCam.SetActive(true);
     }
     
     public void Play() {

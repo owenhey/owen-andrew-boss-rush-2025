@@ -50,7 +50,13 @@ public class LoveInterest : Enemy {
     private bool wentToMiddle = false;
     private bool inMiddleThing = false;
 
-    private void Start() {
+    public ParticleSystem PS;
+
+    public RockEnemy[] rocks;
+    
+    
+    
+    protected override void OnAwake() {
         NextAttackTime = Time.time + 2.0f;
         
         swing12attack.gameObject.SetActive(false);
@@ -59,6 +65,12 @@ public class LoveInterest : Enemy {
         ShowHealthBar();
         
         nextSpinSpawn = Time.time + 6.0f;
+        
+        PS.gameObject.SetActive(false);
+        
+        foreach (var rockEnemy in rocks) {
+            rockEnemy.gameObject.SetActive(false);
+        }
     }
 
     protected override void OnUpdate() {
@@ -95,7 +107,8 @@ public class LoveInterest : Enemy {
                 SpawnSpinner();
             }
 
-            if (!wentToMiddle && CurrentHealth / maxHealth < .98f) {
+            if (!wentToMiddle && CurrentHealth / maxHealth < .5f) {
+                StopAllCoroutines();
                 StartCoroutine(GoToMiddle());
             }
             
@@ -199,27 +212,74 @@ public class LoveInterest : Enemy {
         inMiddleThing = true;
         yield return new WaitForSeconds(.5f);
         ShouldMove = false;
-        StopAllCoroutines();
+        
+        swing3attack.gameObject.SetActive(false);
+        swing12attack.gameObject.SetActive(false);
+        wentToMiddle = true;
         
         JumpToPos(spinSpawnCenter.position);
 
         foreach (var spinner in spawnedSpinners) {
-            spinner.Kill();
+            if(spinner != null)
+                spinner.Kill();
+        }
+
+        spawnedSpinners.Clear();
+        
+        foreach (var rockEnemy in rocks) {
+            rockEnemy.gameObject.SetActive(true);
         }
 
         ikTarget.DOLocalMove(centerAimHigh.localPosition, .5f).SetDelay(.75f);
+        knockbackFactorCode = 0;
+
+        float healAmount = 250;
+        float duration = 20;
+
+        yield return new WaitForSeconds(1.25f);
+        PS.gameObject.SetActive(true);
+        
+        for (int i = 0; i < 30; i++) {
+            yield return new WaitForSeconds(duration / 30.0f);
+            
+            TakeDamage(-(healAmount / 30.0f), transform, true);
+        }
+        
+        PS.gameObject.SetActive(false);
+        canBeDamaged = true;
+        inMiddleThing = false;
+        ShouldMove = true;
+        
+        nextSpinSpawn = Time.time + 10.0f;
+        
+        foreach (var rockEnemy in rocks) {
+            if (rockEnemy != null) {
+                Destroy(rockEnemy.gameObject);
+            }
+        }
+
+        yield return new WaitForSeconds(.25f);
+        SpawnSpinner();
+        yield return new WaitForSeconds(.25f);
+        SpawnSpinner();
+        yield return new WaitForSeconds(.25f);
+        SpawnSpinner();
+        lotsOfSpinners = true;
+        
+        nextSpinSpawn = Time.time + 6.0f;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+    private bool lotsOfSpinners = false;
 
     private void SpawnSpinner() {
+        Debug.Log("Spawning spinner");
         for (var index = 0; index < spawnedSpinners.Count; index++) {
             var spinner = spawnedSpinners[index];
             if (spinner == null) {
@@ -229,20 +289,25 @@ public class LoveInterest : Enemy {
             }
         }
 
-        nextSpinSpawn += 10.0f;
+        nextSpinSpawn = Time.time +  10.0f * (lotsOfSpinners ? .65f : 1.0f);
 
-        if (spawnedSpinners.Count > 2) return;
+        if (spawnedSpinners.Count > (lotsOfSpinners ? 4 : 2)) return;
 
         var newSpinner = Instantiate(spinnerPrefab);
 
         Vector3 position = spinSpawnCenter.position +
-                           new Vector3(Random.Range(-6.0f, 6.0f), 0, Random.Range(-5.0f, 5.0f));
-        while ((player.transform.position - position).magnitude < 4) {
+                           new Vector3(Random.Range(-5.0f, 5.0f), 0, Random.Range(-5.0f, 5.0f));
+        
+        
+        while ((player.transform.position - position).magnitude < 3.5f) {
+            Debug.Log("Trying to find a new one.");
             position = spinSpawnCenter.position +
                        new Vector3(Random.Range(-5.0f, 5.0f), 0, Random.Range(-5.0f, 5.0f));
         }
+        
+        Debug.Log("Final dis from player: " + (player.transform.position - position).magnitude);
 
-        spinnerPrefab.transform.position = position;
+        newSpinner.transform.position = position;
         spawnedSpinners.Add(newSpinner);
     }
 

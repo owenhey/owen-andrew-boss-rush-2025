@@ -86,6 +86,12 @@ public class Enemy : MonoBehaviour, IDamagable {
         secondTalkThreshold = Random.Range(.55f, .65f);
         thirdTalkThreshold = Random.Range(.4f, .5f);
         fourthTalkThreshold = Random.Range(.2f, .3f);
+        
+        OnAwake();
+    }
+
+    protected virtual void OnAwake() {
+        
     }
 
     private void Update() {
@@ -109,8 +115,11 @@ public class Enemy : MonoBehaviour, IDamagable {
         }
     }
     
-    public virtual void TakeDamage(float damage, Transform source) {
-        if (!canBeDamaged) return;
+    public virtual void TakeDamage(float damage, Transform source, bool force = false) {
+        if(!force)
+            if (!canBeDamaged) return;
+        
+        Debug.Log(damage);
         
         Vector3 inBetween = transform.position + Vector3.up;
         if (knockBackFactor * knockbackFactorCode != 0.0) {
@@ -127,8 +136,15 @@ public class Enemy : MonoBehaviour, IDamagable {
             
             Knockback();
         }
+
+        string text = damage.ToString("N0");
+        if (damage < 0) {
+            text = text.Substring(1, text.Length - 1);
+        }
+        var popup = TextPopups.Instance.Get().PopupAbove(text, inBetween, .5f);
+        if (damage < 0) 
+            popup.SetColor(Color.green);
         
-        TextPopups.Instance.Get().PopupAbove(damage.ToString(), inBetween, .5f);
         SplatManager.Instance.Get().Setup(inBetween, hitColor);
 
         if (!InCombat) {
@@ -137,6 +153,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         }
 
         currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, -1, maxHealth);
         OnChangeHealth?.Invoke(-damage, currentHealth);
         if (currentHealth <= 0) {
             Die();

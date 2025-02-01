@@ -30,7 +30,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
         }
     }
 
-    public void TakeDamage(float damage, Transform source) {
+    public void TakeDamage(float damage, Transform source, bool force = false) {
         if (dead) return;
         
         movement.Knockback(source);

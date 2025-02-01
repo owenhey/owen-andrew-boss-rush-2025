@@ -21,6 +21,8 @@ public class DamageInstance : MonoBehaviour {
 
     public Collider c;
 
+    public bool bypassInvulnerable;
+
     public Action OnHit;
     public bool Enabled = true;
 
@@ -69,7 +71,7 @@ public class DamageInstance : MonoBehaviour {
                     swingDuration = Mathf.Clamp(swingDuration - .02f, 0, 1.0f);
                 }
                 
-                damagable.TakeDamage(damage, Source != null ? Source : transform);
+                damagable.TakeDamage(damage, Source != null ? Source : transform, bypassInvulnerable);
                 OnHit?.Invoke();
             }
         }

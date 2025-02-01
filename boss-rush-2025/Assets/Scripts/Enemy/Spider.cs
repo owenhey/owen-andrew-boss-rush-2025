@@ -187,7 +187,7 @@ public class Spider : Enemy {
         GameManager.SpiderDefeated = true;
 
         foreach (var littlespider in smallSpiders) {
-            Destroy(littlespider);
+            Destroy(littlespider.gameObject);
         }
     }
 
