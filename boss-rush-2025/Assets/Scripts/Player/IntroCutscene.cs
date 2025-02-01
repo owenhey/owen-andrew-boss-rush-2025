@@ -85,6 +85,7 @@ public class IntroCutscene : MonoBehaviour {
         loveInterestCam.gameObject.SetActive(false);
         playerWalksUpCam.gameObject.SetActive(true);
             
+        player.enabled = true;
         player.MoveToLocation(playerWalkUpPosition.position, 1.5f);
         yield return new WaitForSeconds(1.5f);
         TextPopups.Instance.Get().PopupAbove("Oh wait! Who's that!?", loveInterest, 2.0f).ShowDark();
@@ -135,6 +136,7 @@ public class IntroCutscene : MonoBehaviour {
 
         yield return new WaitForSeconds(1.0f);
         closeUpCam.SetActive(false);
+        skipCanvas.gameObject.SetActive(false);
 
         mm.GoToGame();
     }

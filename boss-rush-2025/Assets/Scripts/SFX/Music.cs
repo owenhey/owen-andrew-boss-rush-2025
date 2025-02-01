@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class Music : MonoBehaviour {
     [System.Serializable]
@@ -10,7 +11,6 @@ public class Music : MonoBehaviour {
     
     public static Music I;
     public AudioSource MusicSource;
-
     public float fadeTime = .5f;
     
     [SerializeField] private MusicData HubTheme;
@@ -20,6 +20,7 @@ public class Music : MonoBehaviour {
     [SerializeField] private MusicData SpiderThemeIntro;
     [SerializeField] private MusicData RobotTheme;
     [SerializeField] private MusicData RobotThemeIntro;
+    [SerializeField] private MusicData FinalBossTheme;
 
     public float musicVolume = .5f;
 
@@ -79,17 +80,23 @@ public class Music : MonoBehaviour {
         Boss2Source.Play();
     }
 
-    private void Play(MusicData musicData) {
+    public void PlayFinalBossTheme(float time) {
+        Play(FinalBossTheme, time);
+    }
+
+    private void Play(MusicData musicData, float time = 0) {
         if (MusicSource.isPlaying) {
             MusicSource.DOFade(0, fadeTime).OnComplete(() => {
                 MusicSource.clip = musicData.track;
                 MusicSource.Play();
+                MusicSource.time = time;
                 MusicSource.DOFade(musicVolume, fadeTime).From(0);
             });
         }
         else {
             MusicSource.clip = musicData.track;
             MusicSource.Play();
+            MusicSource.time = time;
             MusicSource.DOFade(musicVolume, fadeTime).From(0);
         }
     }

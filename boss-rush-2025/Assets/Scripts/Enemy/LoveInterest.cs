@@ -275,11 +275,14 @@ public class LoveInterest : Enemy {
     }
 
 
-
-
-
-
-
+    protected override void Die() {
+        base.Die();
+        foreach (var spin in spawnedSpinners) {
+            if (spin != null) {
+                spin.Kill();
+            }
+        }
+    }
 
     private bool lotsOfSpinners = false;
 

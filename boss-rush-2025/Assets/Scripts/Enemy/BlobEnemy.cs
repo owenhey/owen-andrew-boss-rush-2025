@@ -147,7 +147,6 @@ public class BlobEnemy : Enemy {
         bossCam.gameObject.SetActive(true);
         
         Invoke(nameof(SpawnBlob), .25f);
-        Invoke(nameof(SpawnBlob), .66f);
         Invoke(nameof(SpawnBlob), .8f);
 
         nextBlobSpawn = Time.time + (blobSpawnRate * 2);

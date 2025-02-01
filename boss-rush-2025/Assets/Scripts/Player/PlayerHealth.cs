@@ -25,9 +25,9 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
 
     private void Update() {
         if (dead) return;
-        if (Input.GetKeyDown(KeyCode.K)) {
-            TakeDamage(1000, transform);
-        }
+        // if (Input.GetKeyDown(KeyCode.K)) {
+        //     TakeDamage(1000, transform);
+        // }
     }
 
     public void TakeDamage(float damage, Transform source, bool force = false) {
@@ -50,7 +50,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
 
     private void Die(Vector3 direction) {
         if (dead) return;
-        
+        Sound.I.PlayDeath();
         dead = true;
         OnDie?.Invoke();
         movement.BlowUp(direction.normalized);

@@ -10,9 +10,15 @@ public class TextPopup : MonoBehaviour {
 
     private int textCount = 0;
 
+    private Transform target;
+
     public float revealSpeed = .01f;
 
     private string toldText;
+
+    private Vector3 vel;
+    private Vector3 offset;
+    
     private void Awake() {
         cam = Camera.main.transform;
     }
@@ -37,6 +43,9 @@ public class TextPopup : MonoBehaviour {
             transform.DOScale(Vector3.zero, .15f).SetDelay(duration).OnComplete(() => {
                 gameObject.SetActive(false);
                 animating = false;
+                target = null;
+                vel = Vector3.zero;
+                offset = Vector3.zero;
             });
         });
         return this;
@@ -59,6 +68,10 @@ public class TextPopup : MonoBehaviour {
     int index = 0;
     private float previousTime = 0;
     private void Update() {
+        if (target != null) {
+            transform.position = Vector3.SmoothDamp(transform.position, target.position + offset, ref vel, .5f);
+        }
+        
         if(animating)
         if (Time.time > previousTime + revealSpeed) {
             if (index <= toldText.Length) {
@@ -93,14 +106,20 @@ public class TextPopup : MonoBehaviour {
     }
 
     public TextPopup Popup(string text, Transform location, float duration = 3.0f, float delay = 0) {
+        target = location;
         return Popup(text, location.position, duration, delay);
     }
     
     public TextPopup PopupAbove(string text, Vector3 location, float duration = 3.0f, float delay = 0) {
+        offset = Vector3.up * 3;
         return Popup(text, location + Vector3.up * 3.0f, duration, delay);
+        
     }
 
     public TextPopup PopupAbove(string text, Transform location, float duration = 3.0f, float delay = 0) {
+        target = location;
+        offset = Vector3.up * 3;
         return Popup(text, location.position + Vector3.up * 3.0f, duration, delay);
+        
     }
 }

@@ -167,8 +167,9 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possibleEnemyTalkDuringCombatLines != null && possibleEnemyTalkDuringCombatLines.Count > 0) {
                     var randomString = possibleEnemyTalkDuringCombatLines[Random.Range(0, possibleEnemyTalkDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
-
+                    float wait = Random.Range(.5f, 1.0f);
+                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, wait).MakePopout();
+                    OnEnemySpeak(wait);
                     possibleEnemyTalkDuringCombatLines.Remove(randomString);
                 }
             }
@@ -177,7 +178,8 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possiblePlayerDuringCombatLines != null && possiblePlayerDuringCombatLines.Count > 0) {
                     var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, Movement.GetPlayerPos(), 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
+                    float wait = Random.Range(.5f, 1.0f);
+                    TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, wait).MakePopout();
 
                     possiblePlayerDuringCombatLines.Remove(randomString);
                 }
@@ -187,8 +189,9 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possibleEnemyTalkDuringCombatLines != null && possibleEnemyTalkDuringCombatLines.Count > 0) {
                     var randomString = possibleEnemyTalkDuringCombatLines[Random.Range(0, possibleEnemyTalkDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
-
+                    float wait = Random.Range(.5f, 1.0f);
+                    TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, wait).MakePopout();
+                    OnEnemySpeak(wait);
                     possibleEnemyTalkDuringCombatLines.Remove(randomString);
                 }
             }
@@ -197,7 +200,8 @@ public class Enemy : MonoBehaviour, IDamagable {
                 talkDuringCombatAmount++;
                 if (possiblePlayerDuringCombatLines != null && possiblePlayerDuringCombatLines.Count > 0) {
                     var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
-                    TextPopups.Instance.Get().PopupAbove(randomString, Movement.GetPlayerPos(), 2.5f, Random.Range(.5f, 1.0f)).MakePopout();
+                    float wait = Random.Range(.5f, 1.0f);
+                    TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, wait).MakePopout();
 
                     possiblePlayerDuringCombatLines.Remove(randomString);
                 }
@@ -214,6 +218,10 @@ public class Enemy : MonoBehaviour, IDamagable {
     public BossDieRoutine bossDeathRoutine;
 
     protected Vector3 damageTowards;
+
+    protected virtual void OnEnemySpeak(float delay) {
+        
+    }
     
     protected virtual void Die() {
         Destroy(transformTarget.gameObject);
@@ -255,6 +263,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         if (possibleEnterBossZoneMessages == null || possibleEnterBossZoneMessages.Count == 0) return;
 
         var randomString = possibleEnterBossZoneMessages[Random.Range(0, possibleEnterBossZoneMessages.Count)];
+        OnEnemySpeak(0);
         TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.0f);
     }
 
@@ -262,13 +271,14 @@ public class Enemy : MonoBehaviour, IDamagable {
         if (possiblePlayerStartCombatMessages == null || possiblePlayerStartCombatMessages.Count == 0) return;
 
         var randomString = possiblePlayerStartCombatMessages[Random.Range(0, possiblePlayerStartCombatMessages.Count)];
-        TextPopups.Instance.Get().PopupAbove(randomString, player.transform.position, 1.5f);
+        TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 1.5f);
     }
     
     public virtual void PlayBossEnterCombatLines() {
         if (possibleStartCombatLines == null || possibleStartCombatLines.Count == 0) return;
 
         var randomString = possibleStartCombatLines[Random.Range(0, possibleStartCombatLines.Count)];
+        OnEnemySpeak(.7f);
         TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.0f, .7f);
     }
 
@@ -298,7 +308,7 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     public void SayPlayerDeathText() {
         if (possiblePlayerKilledMessages == null || possiblePlayerKilledMessages.Count == 0) return;
-        
+        OnEnemySpeak(.5f);
         var randomString = possiblePlayerKilledMessages[Random.Range(0, possiblePlayerKilledMessages.Count)];
         TextPopups.Instance.Get().PopupAbove(randomString, transform, 2.5f, .5f);
     }

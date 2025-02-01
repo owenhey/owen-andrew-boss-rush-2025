@@ -111,6 +111,8 @@ public class RockBehavior : MonoBehaviour {
 
     private void ThrowRock(InputAction.CallbackContext obj) {
         if (!movingRock) return;
+        if (Mathf.Abs(rotationAmount) < 10) return;
+        
         movingRock = false;
         
         damage.damage = Mathf.Lerp(50, 100, Mathf.Abs(rotationAmount) / maxRotSpeed);

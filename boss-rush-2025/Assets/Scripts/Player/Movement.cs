@@ -159,8 +159,8 @@ public class Movement : MonoBehaviour {
         direction.Normalize();
         rolling = true;
         
-        TextPopups.Instance.Get().PopupAbove("Roll!", transform.position, .25f);
-        
+        TextPopups.Instance.Get().PopupAbove("Roll!", transform, .25f);
+        Sound.I.PlayRoll();
         rollTarget = playerPos + direction * rollDistance;
         rollStart = playerPos;
         rollStartTime = Time.time;
@@ -218,6 +218,10 @@ public class Movement : MonoBehaviour {
         
         camForwardNoZ = mainCam.transform.forward;
         camForwardNoZ.y = 0;
+
+        if (Time.time > rollEndTime) {
+            gameObject.layer = 7;
+        }
 
         if (Cutscened) return;
         if (gettingKnocked) {

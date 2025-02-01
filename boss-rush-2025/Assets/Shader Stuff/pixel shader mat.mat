@@ -46,7 +46,7 @@ Material:
     - _Sobel_Cutoff: 0.001
     - _Sobel_Distance: 0.1
     - _maxdistance: 6
-    - _mindistance: 7
+    - _mindistance: 150
     m_Colors:
     - _Edge_Color: {r: 0.122641504, g: 0.07458169, b: 0.044544317, a: 0.7921569}
   m_BuildTextureStacks: []

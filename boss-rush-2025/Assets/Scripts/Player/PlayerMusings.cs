@@ -10,7 +10,7 @@ public class PlayerMusings : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer is 7 or 8) {
             var randomSTring = strings[Random.Range(0, strings.Count)];
-            TextPopups.Instance.Get().PopupAbove(randomSTring, Movement.GetPlayerPos(), 2.5f).MakePopout();
+            TextPopups.Instance.Get().PopupAbove(randomSTring, other.transform, 2.5f).MakePopout();
             Destroy(gameObject);
         }
     }

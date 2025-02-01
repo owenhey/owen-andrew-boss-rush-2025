@@ -26,9 +26,12 @@ public class FinalBossCutscene : MonoBehaviour {
 
     public Enemy neutralLoveInterest;
     public Enemy realLoveInterest;
+
+    public ParticleSystem heartPS;
     
     public void Play() {
         StartCoroutine(PlayRoutine());
+        
     }
 
     private void OnEnable() {
@@ -49,15 +52,20 @@ public class FinalBossCutscene : MonoBehaviour {
 
     public void Skip(InputAction.CallbackContext obj) {
         if (Time.time < TimeSkipped + .1f) return;
-        
+        if (!playedMusic) {
+            Music.I.PlayFinalBossTheme(11.0f);
+        }
         StopAllCoroutines();
         PlayGame();
     }
+
+    private bool playedMusic = false;
 
     private IEnumerator PlayRoutine() {
         yield return new WaitForSeconds(1.0f);
         closeUpCam.gameObject.SetActive(true);
         player.MoveToLocation(playerPos.position, 2.5f);
+        player.enabled = true;
         yield return new WaitForSeconds(2.25f);
         
         TextPopups.Instance.Get().PopupAbove("So, I'll be taking that rose now.", player.transform, 3.0f).ShowDark();
@@ -80,17 +88,21 @@ public class FinalBossCutscene : MonoBehaviour {
         
         TextPopups.Instance.Get().PopupAbove("What do you mean!?", player.transform, 2.5f).ShowDark();
         yield return new WaitForSeconds(3f);
+        Music.I.PlayFinalBossTheme(0);
+        playedMusic = true;
+        
+        heartPS.Stop();
         
         TextPopups.Instance.Get().PopupAbove("You fell for the oldest trick in the book!", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
         
-        TextPopups.Instance.Get().PopupAbove("Now I have free reign!", loveInterest.transform, 3.5f).ShowDark();
+        TextPopups.Instance.Get().PopupAbove("Now this land is mine for the taking!", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
         
-        TextPopups.Instance.Get().PopupAbove("And can take my rightful place as ruler.", loveInterest.transform, 3.5f).ShowDark();
+        TextPopups.Instance.Get().PopupAbove("I can seize my rightful place as ruler.", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
         
-        TextPopups.Instance.Get().PopupAbove("There's just one left to get rid of...", loveInterest.transform, 3.5f).ShowDark();
+        TextPopups.Instance.Get().PopupAbove("There's just one PEST left to get rid of...", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
         
         TextPopups.Instance.Get().PopupAbove("Eek!", player.transform, 1f).ShowDark();

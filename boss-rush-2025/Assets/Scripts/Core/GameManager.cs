@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour {
 
     public static string lastBossKilled;
 
+    public static bool IsEasyMode;
+    public static bool AimTowardsMouse = true;
+
     private void Awake() {
         instance = this;
 
@@ -52,7 +55,6 @@ public class GameManager : MonoBehaviour {
         var allEnemies = GameObject.FindObjectsByType<Enemy>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         foreach (var enemy in allEnemies) {
-            enemy.StopAllCoroutines();
             enemy.InCombat = false;
             enemy.SayPlayerDeathText();
         }

@@ -186,7 +186,12 @@ public class RobotEnemy : Enemy {
 
         walls.DOScale(Vector3.one, .35f);
     }
-    
+
+    protected override void OnEnemySpeak(float delay) {
+        base.OnEnemySpeak(delay);
+        Sound.I.PlayRobotTalk();
+    }
+
     private void LookAt(Vector3 target) {
         Vector3 lookTowards = target - transform.position;
         lookTowards.y = 0;
@@ -217,11 +222,13 @@ public class RobotEnemy : Enemy {
         }
         laserMat.DOColor(activeLaserColor, "_Color", .15f);
         
-        for (int i = 0; i < 10; i++) {
+        Sound.I.PlayLaser2();
+        
+        for (int i = 0; i < 8; i++) {
             foreach (var spinAttack in spinAttacks) {
                 spinAttack.Item2.SingleSwipe();
             }
-            yield return new WaitForSeconds(spinAttackDuration * .1f);
+            yield return new WaitForSeconds(spinAttackDuration * (1/8.0f));
         }
         foreach (var spinAttack in spinAttacks) {
             spinAttack.Item2.SingleSwipe();
@@ -250,13 +257,19 @@ public class RobotEnemy : Enemy {
         TextPopups.Instance.Get().PopupAbove("!", transform, .25f).SetColor(Color.red).SetSize(4.0f);
         yield return new WaitForSeconds(d);
         
+        Sound.I.PlayLaser1();
+        
         laserMat.DOColor(activeLaserColor, "_Color", .1f);
         laser.SingleSwipe();
         laser.c.enabled = true;
         laser.Enabled = true;
         behindPlayerTarget.gameObject.SetActive(true);
-        laserParent.DOScale(new Vector3(1.0f, 1.0f, 1.0f), .1f);
-        yield return new WaitForSeconds(attackDuration);
+        laserParent.DOScale(new Vector3(1.0f, 1.0f, 1.0f), .1f).OnComplete(() => {
+            
+        });
+        yield return new WaitForSeconds(attackDuration * .5f);
+        laser.SingleSwipe();
+        yield return new WaitForSeconds(attackDuration * .5f);
         laser.SingleSwipe();
         laser.Enabled = false;
         laser.gameObject.SetActive(false);
@@ -280,8 +293,6 @@ public class RobotEnemy : Enemy {
             yield return null;
         }
         
-        Debug.Log("Stopped moving");
-
         targetPosition = transform.position;
         ShouldMove = false;
 

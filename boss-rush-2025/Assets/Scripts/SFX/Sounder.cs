@@ -9,6 +9,8 @@ public class Sounder : MonoBehaviour {
     
     private AudioSource[] _sources;
 
+    public bool loop = false;
+
     public List<AudioClip> sources;
 
     private void Start() {
@@ -21,11 +23,19 @@ public class Sounder : MonoBehaviour {
         }
         _sources = GetComponentsInChildren<AudioSource>();
         foreach (var source in _sources) {
-            source.loop = false;
+            source.loop = loop;
             source.playOnAwake = false;
             source.Stop();
             source.volume *= Volume;
+            source.outputAudioMixerGroup = GameManager.instance.mixer;
         }
+    }
+
+    public void PlayLoop() {
+        for (int i = 0; i < _sources.Length; i++) {
+            if (_sources[i].isPlaying) return;
+        }
+        _sources[Random.Range(0, _sources.Length)].Play();
     }
 
     public void Play(float delay) {
@@ -43,5 +53,11 @@ public class Sounder : MonoBehaviour {
         _sources[startindex].pitch = Random.Range(.9f, 1.1f);
         _sources[startindex].time = 0;
         _sources[startindex].PlayDelayed(delay);
+    }
+
+    public void Stop() {
+        for (int i = 0; i < _sources.Length; i++) {
+            _sources[i].Stop();
+        }
     }
 }

@@ -10,6 +10,15 @@ public class Sound : MonoBehaviour {
     public Sounder Swing1;
     public Sounder Swing2;
     public Sounder Hit;
+    public Sounder Laser1;
+    public Sounder Laser2;
+    public Sounder Roll;
+    public Sounder Death;
+    public Sounder SpiderTalk;
+    public Sounder SpiderWalk;
+    public Sounder SpiderAttack;
+    public Sounder SpiderPreAttack;
+    public Sounder RobotTalk;
 
     public void Awake() {
         I = this;
@@ -17,6 +26,18 @@ public class Sound : MonoBehaviour {
 
     public void PlayFootstep(float delay = 0) {
         Footstepsound.Play(delay);
+    }
+    
+    public void PlaySpiderTalk(float delay = 0) {
+        SpiderTalk.Play(delay);
+    }
+
+    public void PlaySpiderWalk() {
+        SpiderWalk.PlayLoop();
+    }
+
+    public void StopSpiderWalk() {
+        SpiderWalk.Stop();
     }
     
     public void PlaySwing1(float delay = 0) {
@@ -27,7 +48,35 @@ public class Sound : MonoBehaviour {
         Swing2.Play(delay);
     }
     
+    public void PlayLaser1(float delay = 0) {
+        Laser1.Play(delay);
+    }
+    
+    public void PlayLaser2(float delay = 0) {
+        Laser2.Play(delay);
+    }
+    
     public void PlayHit(float delay = 0) {
         Hit.Play(delay);
+    }
+    
+    public void PlayRoll(float delay = 0) {
+        Roll.Play(delay);
+    }
+    
+    public void PlayDeath(float delay = 0) {
+        Death.Play(delay);
+    }
+    
+    public void PlaySpiderAttack(float delay = 0) {
+        SpiderAttack.Play(delay);
+    }
+    
+    public void PlaySpiderPreAttack(float delay = 0) {
+        SpiderPreAttack.Play(delay);
+    }
+    
+    public void PlayRobotTalk(float delay = 0) {
+        RobotTalk.Play(delay);
     }
 }

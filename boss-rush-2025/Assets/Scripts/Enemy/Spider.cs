@@ -89,9 +89,11 @@ public class Spider : Enemy {
                 towardsPlayer.y = 0;
                 if (towardsPlayer.magnitude > minSpiderDistance && inWalkingPhase) {
                     targetPosition = player.transform.position;
+                    Sound.I.PlaySpiderWalk();
                 }
                 else {
                     targetPosition = transform.position;
+                    Sound.I.StopSpiderWalk();
                 }
             }
         }
@@ -177,8 +179,11 @@ public class Spider : Enemy {
     }
     
     private IEnumerator SingleSpiderAttack() {
+        Sound.I.PlaySpiderPreAttack();
+        yield return new WaitForSeconds(.35f);
         TextPopups.Instance.Get().PopupAbove("!", transform, .25f).SetColor(Color.red).SetSize(4.0f);
-        yield return new WaitForSeconds(.25f);
+        Sound.I.PlaySpiderAttack();
+        yield return new WaitForSeconds(.15f);
         BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
             SingleDamageInstance.SingleSwipe();
             BodyParent.DOLocalMove(Vector3.zero, .1f);
@@ -203,10 +208,17 @@ public class Spider : Enemy {
         }
     }
 
+    protected override void OnEnemySpeak(float delay) {
+        base.OnEnemySpeak(delay);
+        Sound.I.PlaySpiderTalk(delay);
+    }
+
     private IEnumerator Spider3AttackCoroutine() {
         nextAttackTime = Time.time + (Random.Range(0.0f, 1.0f) < .5f ? 13.0f : 19.0f);
         knockbackFactorCode = 0.0f;
         autoMove = false;
+        
+        Sound.I.PlaySpiderWalk();
         
         // Run away from the player for a moment, then run towards really quickly
         Vector3 location = GetRandomSpotInCircle();
@@ -216,28 +228,34 @@ public class Spider : Enemy {
         
         targetPosition = location;
         speedFactor = 4f;
+        
+        Sound.I.PlaySpiderPreAttack();
         yield return new WaitForSeconds(1.0f);
+        
+        Sound.I.StopSpiderWalk();
         
         speedFactor = 10.0f;
         Vector3 playerPos = Movement.GetPlayerPos();
         Vector3 towardsSpider = (transform.position - playerPos).normalized;
         targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
-        
-        yield return new WaitForSeconds(.15f);
-        
+        Sound.I.PlaySpiderAttack();
+        yield return new WaitForSeconds(.2f);
+        Sound.I.PlaySpiderWalk();
         DamageInstance.SingleSwipe();
         
         BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
             BodyParent.DOLocalMove(Vector3.zero, .1f);
         });
         
+        Sound.I.PlaySpiderPreAttack();
         yield return new WaitForSeconds(.8f);
+        Sound.I.StopSpiderWalk();
         
         playerPos = Movement.GetPlayerPos();
         towardsSpider = (transform.position - playerPos).normalized;
         targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
-        
-        yield return new WaitForSeconds(.15f);
+        Sound.I.PlaySpiderAttack();
+        yield return new WaitForSeconds(.2f);
         
         DamageInstance.SingleSwipe();
         
@@ -250,14 +268,16 @@ public class Spider : Enemy {
         playerPos = Movement.GetPlayerPos();
         towardsSpider = (transform.position - playerPos).normalized;
         targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
-        
-        yield return new WaitForSeconds(.15f);
+        Sound.I.PlaySpiderAttack();
+        yield return new WaitForSeconds(.2f);
         
         DamageInstance.SingleSwipe();
         
         BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
             BodyParent.DOLocalMove(Vector3.zero, .1f);
         });
+        
+        Sound.I.StopSpiderWalk();
         
         speedFactor = 1.0f;
         knockbackFactorCode = 1.0f;

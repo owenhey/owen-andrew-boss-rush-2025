@@ -38,13 +38,13 @@ public class MainMenu : MonoBehaviour {
         pixelMat.SetFloat("_mindistance", 7);
 
         volume.profile = mainProfile;
-
+        movement.enabled = false;
         StartCoroutine(ResetC());
     }
 
     private IEnumerator ResetC() {
         yield return null;
-        
+
         mainMenuCam.gameObject.SetActive(true);
         
         GameManager.instance.EnableUI();
@@ -52,33 +52,38 @@ public class MainMenu : MonoBehaviour {
         GameManager.instance.EnableGameplay();
         GameManager.instance.EnableRock();
         
-        Debug.Log("Main 1");
         bool killedAllBosses = GameManager.BlobDefeated && GameManager.RobotDefeated && GameManager.SpiderDefeated;
         if (WentPastCutscene && !killedAllBosses) {
             GameManager.instance.EnableUI();
             GameManager.instance.EnableCutscene();
             GameManager.instance.EnableGameplay();
+            
+            movement.playerCC.enabled = false;
             movement.transform.SetPositionAndRotation(gameLoc.position, gameLoc.rotation);
+            movement.targetPositionTrans.position = gameLoc.position;
+            movement.playerCC.enabled = true;
             
             pixelMat.SetFloat("_mindistance", 150);
             GameManager.instance.EnableGameplay();
             
             volume.profile = gameProfile;
-            Debug.Log("Main 2");
             
             mainMenuCanvas.SetActive(false);
             hudCanvas.SetActive(true);
             gameCanvas.SetActive(true);
-            
+            movement.enabled = true;
             mainMenuCam.SetActive(false);
         }
         else {
-            Debug.Log("Main 3");
+            pixelMat.SetFloat("_mindistance", 150);
+            movement.playerCC.enabled = false;
+            movement.transform.SetPositionAndRotation(mainMenuLoc.position, mainMenuLoc.rotation);
+            movement.targetPositionTrans.position = mainMenuLoc.position;
+            movement.playerCC.enabled = true;
+            
             if (killedAllBosses) {
-                Debug.Log("killed all bosses");
                 fcutscene.gameObject.SetActive(true);
                 fcutscene.Play();
-                Debug.Log("Main 4");
                 GameManager.instance.EnableCutscene();
                 volume.profile = gameProfile;
         
@@ -89,9 +94,7 @@ public class MainMenu : MonoBehaviour {
             else {
                 GameManager.instance.EnableGameplay();
                 GameManager.instance.EnableUI();
-                movement.transform.SetPositionAndRotation(mainMenuLoc.position, mainMenuLoc.rotation);
-                Debug.Log("Main 5");
-        
+                
                 mainMenuCanvas.SetActive(true);
                 hudCanvas.SetActive(false);
                 gameCanvas.SetActive(false);
@@ -117,6 +120,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void GoToGame() {
+        movement.enabled = true;
         GameManager.instance.EnableGameplay();
         hudCanvas.SetActive(true);
         gameCanvas.SetActive(true);

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class RagdollHelper : MonoBehaviour {
     public Rigidbody rb;
-    public Collider collider;
+    public new Collider collider;
 
     void Reset() {
         rb = GetComponent<Rigidbody>();

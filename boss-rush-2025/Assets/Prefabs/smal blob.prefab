@@ -5636,6 +5636,11 @@ MonoBehaviour:
   IsFromPlayer: 0
   Source: {fileID: 5486653658223145064}
   followTarget: {fileID: 0}
+  capsulePoint1: {fileID: 0}
+  capsulePoint2: {fileID: 0}
+  c: {fileID: 0}
+  bypassInvulnerable: 0
+  Enabled: 1
 --- !u!135 &510501208233766431
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5739,10 +5744,15 @@ MonoBehaviour:
   damageLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  damage: 10
+  damage: 8
   IsFromPlayer: 0
   Source: {fileID: 5486653658223145064}
   followTarget: {fileID: 0}
+  capsulePoint1: {fileID: 0}
+  capsulePoint2: {fileID: 0}
+  c: {fileID: 0}
+  bypassInvulnerable: 0
+  Enabled: 1
 --- !u!136 &8384648252119564963
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6284,14 +6294,23 @@ MonoBehaviour:
   EnemyName: Small Blob
   knockBackFactor: 1
   cc: {fileID: 6865171686705103716}
+  Resettargetonknockback: 1
   transformTarget: {fileID: 5403784301721400729}
   InCombat: 1
   maxHealth: 30
   speed: 0
   damping: 0
   useBossHealthBar: 0
-  combatStartText: 
   hitColor: {r: 0.351055, g: 0.6132076, b: 0.33842117, a: 1}
+  musicString: 
+  possibleEnterBossZoneMessages: []
+  possiblePlayerKilledMessages: []
+  possiblePlayerStartCombatMessages: []
+  possibleStartCombatLines: []
+  possiblePlayerDuringCombatLines: []
+  possibleEnemyTalkDuringCombatLines: []
+  DestroyOnDeath: 1
+  bossDeathRoutine: {fileID: 0}
   blobHead: {fileID: 6484691858724670577}
   blobAttackIndicator: {fileID: 897683477619148370}
   blobAttackInstance: {fileID: 8073721467250099406}
@@ -6308,6 +6327,7 @@ MonoBehaviour:
   radius: 8
   parentBlob: {fileID: 0}
   damageInstance: {fileID: 1815878154296174493}
+  IsJumping: 0
 --- !u!1 &5862320187850949285
 GameObject:
   m_ObjectHideFlags: 0
