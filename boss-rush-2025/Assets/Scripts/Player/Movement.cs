@@ -66,6 +66,8 @@ public class Movement : MonoBehaviour {
     public Transform rollCenter;
 
     public FlailMovement flail;
+
+    public Action OnRoll;
     
     private void Awake() {
         targetPositionTrans.parent = null;
@@ -109,7 +111,7 @@ public class Movement : MonoBehaviour {
             RaycastHit hit;
             Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
         
-            if (Physics.Raycast(ray, out hit, 100, groundLayerMask)) {
+            if (GameManager.AimTowardsMouse && Physics.Raycast(ray, out hit, 100, groundLayerMask)) {
                 // Face towards this direction
                 Vector3 towardsMouse = hit.point - playerCC.transform.position;
                 towardsMouse.y = 0;
@@ -158,6 +160,8 @@ public class Movement : MonoBehaviour {
         }
         direction.Normalize();
         rolling = true;
+        
+        OnRoll?.Invoke();
         
         TextPopups.Instance.Get().PopupAbove("Roll!", transform, .25f);
         Sound.I.PlayRoll();

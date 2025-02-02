@@ -16,6 +16,7 @@ public class BlobEnemy : Enemy {
     public Transform blobHead;
     public Transform blobPullBackPos;
     public Transform blobAttackPos;
+    public Transform blobDeathPos;
     public Transform blobRestPos;
 
     [Header("Stats")] 
@@ -137,6 +138,18 @@ public class BlobEnemy : Enemy {
                 blob.Kill();
             }
         }
+        
+        StopAllCoroutines();
+        InCombat = false;
+        nextBlobSpawn = 1000000;
+        nextAttackTime = 100000;
+        blobHead.DOKill();
+        blobAttackInstance.gameObject.SetActive(false);
+        blobHead.DOLocalMove(blobDeathPos.localPosition, .25f).OnComplete(() => {
+            transform.DOScale(0, .5f).OnComplete(() => {
+                Destroy(gameObject);
+            });
+        });
 
         GameManager.BlobDefeated = true;
     }
@@ -170,6 +183,8 @@ public class BlobEnemy : Enemy {
         attacking = true;
         blobHead.DOLocalMove(blobPullBackPos.localPosition, .25f);
         yield return new WaitForSeconds(basicAttackDelay);
+        Sound.I.PlayBlobSquishLow();
+        TextPopups.Instance.Get().PopupAbove("!!!", transform.position + Vector3.one, .5f).SetColor(Color.red).SetSize(3);
         blobHead.DOLocalMove(blobAttackPos.localPosition, basicAttackTime).SetEase(Ease.OutBounce).OnComplete(() => {
             blobAttackInstance.gameObject.SetActive(true);
             blobHead.DOLocalMove(blobRestPos.localPosition, .1f).OnComplete(() => {

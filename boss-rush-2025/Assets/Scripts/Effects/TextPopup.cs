@@ -31,6 +31,7 @@ public class TextPopup : MonoBehaviour {
     
     public TextPopup Popup(string text, Vector3 location, float duration = 3.0f, float delay = 0) {
         SetColor(Color.white);
+        transform.DOKill();
         gameObject.SetActive(true);
         transform.localScale = Vector3.one;
         toldText = text;

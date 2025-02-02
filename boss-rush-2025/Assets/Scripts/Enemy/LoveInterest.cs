@@ -53,8 +53,8 @@ public class LoveInterest : Enemy {
     public ParticleSystem PS;
 
     public RockEnemy[] rocks;
-    
-    
+
+    public WinGameCutscene winGame;
     
     protected override void OnAwake() {
         NextAttackTime = Time.time + 2.0f;
@@ -282,6 +282,9 @@ public class LoveInterest : Enemy {
                 spin.Kill();
             }
         }
+        
+        winGame.gameObject.SetActive(true);
+        winGame.Play();
     }
 
     private bool lotsOfSpinners = false;

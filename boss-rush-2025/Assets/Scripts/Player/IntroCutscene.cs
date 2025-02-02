@@ -26,6 +26,8 @@ public class IntroCutscene : MonoBehaviour {
 
     public GameObject skipCanvas;
     private float TimeSkipped = 100000;
+
+    public HowToPlay howToPlay;
     
     public void Play() {
         StartCoroutine(PlayRoutine());
@@ -58,6 +60,9 @@ public class IntroCutscene : MonoBehaviour {
         closeUpCam.SetActive(false);
         gameObject.SetActive(false);
         mm.GoToGame();
+        
+        howToPlay.gameObject.SetActive(true);
+        howToPlay.ShowHowToPlay();
         
         player.MoveToLocation(mm.gameLoc.position, 1.5f);
     }
@@ -137,6 +142,9 @@ public class IntroCutscene : MonoBehaviour {
         yield return new WaitForSeconds(1.0f);
         closeUpCam.SetActive(false);
         skipCanvas.gameObject.SetActive(false);
+        
+        howToPlay.gameObject.SetActive(true);
+        howToPlay.ShowHowToPlay();
 
         mm.GoToGame();
     }

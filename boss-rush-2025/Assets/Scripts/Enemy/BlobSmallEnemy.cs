@@ -99,6 +99,7 @@ public class BlobSmallEnemy : Enemy {
             blobHead.DOLocalMove(headRegularPos.localPosition, .2f).SetEase(Ease.InOutQuad);
         });
         damageInstance.SingleSwipe();
+        Sound.I.PlayBlobSquish();
         IsJumping = false;
     }
 

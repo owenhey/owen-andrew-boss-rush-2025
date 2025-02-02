@@ -53,6 +53,7 @@ public class MainMenu : MonoBehaviour {
         GameManager.instance.EnableRock();
         
         bool killedAllBosses = GameManager.BlobDefeated && GameManager.RobotDefeated && GameManager.SpiderDefeated;
+        killedAllBosses = true;
         if (WentPastCutscene && !killedAllBosses) {
             GameManager.instance.EnableUI();
             GameManager.instance.EnableCutscene();

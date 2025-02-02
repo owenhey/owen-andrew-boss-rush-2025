@@ -19,6 +19,9 @@ public class Sound : MonoBehaviour {
     public Sounder SpiderAttack;
     public Sounder SpiderPreAttack;
     public Sounder RobotTalk;
+    public Sounder RobotDeath;
+    public Sounder BlobSquish;
+    public Sounder BlobSquishLow;
 
     public void Awake() {
         I = this;
@@ -78,5 +81,17 @@ public class Sound : MonoBehaviour {
     
     public void PlayRobotTalk(float delay = 0) {
         RobotTalk.Play(delay);
+    }
+    
+    public void PlayRobotDeath(float delay = 0) {
+        RobotDeath.Play(delay);
+    }
+    
+    public void PlayBlobSquish(float delay = 0) {
+        BlobSquish.Play(delay);
+    }
+    
+    public void PlayBlobSquishLow(float delay = 0) {
+        BlobSquishLow.Play(delay);
     }
 }

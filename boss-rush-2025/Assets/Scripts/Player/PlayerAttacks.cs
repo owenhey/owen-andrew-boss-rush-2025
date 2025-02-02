@@ -45,7 +45,9 @@ public class PlayerAttacks : MonoBehaviour {
 
     public DamageInstance damageInstancePrefab;
 
-    private static PlayerAttacks instance; 
+    private static PlayerAttacks instance;
+
+    public Action<int> OnAttack;
     
     private enum StrikePhase {
         none,
@@ -117,6 +119,7 @@ public class PlayerAttacks : MonoBehaviour {
         midSwing = true;
         trailMat.color = firstStrikeColor;
         Movement.ForceToFaceInputOrMouse();
+        OnAttack?.Invoke(1);
 
         flailForwardRotation.DOKill();
         flailRotation.DOKill();
@@ -160,6 +163,7 @@ public class PlayerAttacks : MonoBehaviour {
         currentAttack = StrikePhase.second;
         nextPhase = StrikePhase.third;
         midSwing = true;
+        OnAttack?.Invoke(2);
         
         GameObject damageInstance = null;
 
@@ -210,6 +214,7 @@ public class PlayerAttacks : MonoBehaviour {
         currentAttack = StrikePhase.third;
         nextPhase = StrikePhase.second;
         midSwing = true;
+        OnAttack?.Invoke(3);
 
         trailMat.color = thirdStrikeColor;
         Movement.ForceToFaceInputOrMouse();

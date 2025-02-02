@@ -32,6 +32,10 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
 
     public void TakeDamage(float damage, Transform source, bool force = false) {
         if (dead) return;
+
+        if (GameManager.IsEasyMode) {
+            damage *= .7f;
+        }
         
         movement.Knockback(source);
 

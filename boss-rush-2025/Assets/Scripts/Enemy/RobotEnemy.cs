@@ -86,7 +86,7 @@ public class RobotEnemy : Enemy {
             }
 
             if (spinAttacking) {
-                float factor = CurrentHealth / maxHealth > .5f ? 1.0f : 1.5f;
+                float factor = CurrentHealth / maxHealth > .5f ? 1.0f : 1.3f;
                 spinParent.Rotate(new Vector3(0, factor * spinAttackRotateSpeed * Time.deltaTime, 0));
             }
 
@@ -169,6 +169,7 @@ public class RobotEnemy : Enemy {
         
         Destroy(laserParent.gameObject);
         Destroy(spinParent.gameObject);
+        Sound.I.PlayRobotDeath();
         
         foreach (var ragdoll in _ragdollHelpers) {
             ragdoll.Enable();
