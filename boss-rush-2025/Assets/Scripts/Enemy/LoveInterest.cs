@@ -300,6 +300,8 @@ public class LoveInterest : Enemy {
             ragdoll.Enable();
             ragdoll.Push(damageTowards);
         }
+        
+        Sound.I.PlayBossDefeated(.5f);
     }
 
     private bool lotsOfSpinners = false;

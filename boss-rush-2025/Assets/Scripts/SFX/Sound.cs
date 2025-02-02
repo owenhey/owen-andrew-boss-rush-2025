@@ -25,6 +25,7 @@ public class Sound : MonoBehaviour {
     public Sounder PlayerHurt;
     public Sounder PlayerVoice;
     public Sounder LoveInterestVoice;
+    public Sounder BossDefeated;
 
     public void Awake() {
         I = this;
@@ -108,5 +109,9 @@ public class Sound : MonoBehaviour {
     
     public void PlayLoveInterestVoice(float delay = 0) {
         LoveInterestVoice.Play(delay);
+    }
+    
+    public void PlayBossDefeated(float delay = 0) {
+        BossDefeated.Play(delay);
     }
 }

@@ -14,7 +14,9 @@ public class BossDieRoutine : MonoBehaviour {
     }
 
     private IEnumerator BossC(string bossname) {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.5f);
+        Sound.I.PlayBossDefeated();
+        yield return new WaitForSeconds(.5f);
         Music.I.FadeOut();
         GameManager.instance.EnableCutscene();
 
