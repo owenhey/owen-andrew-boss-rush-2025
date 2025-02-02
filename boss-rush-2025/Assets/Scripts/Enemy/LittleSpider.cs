@@ -63,8 +63,9 @@ public class LittleSpider : MonoBehaviour {
         
         Quaternion targetRotation = Quaternion.LookRotation(towardsTarget);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turingSpeed * Time.deltaTime);
-        
-        transform.position += towardsTarget.normalized * (speed * Time.deltaTime);
+
+        float spe = speed * (GameManager.IsEasyMode ? .75f : 1.0f);
+        transform.position += towardsTarget.normalized * (spe * Time.deltaTime);
 
         for (var index = 0; index < feet.Count; index++) {
             var foot = feet[index];

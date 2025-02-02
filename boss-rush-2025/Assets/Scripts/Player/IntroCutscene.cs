@@ -75,6 +75,7 @@ public class IntroCutscene : MonoBehaviour {
         playerCamStart.gameObject.SetActive(true);
         
         yield return new WaitForSeconds(1.0f);
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("If only I had someone to share this lonely world with...", player.transform, 4.5f).ShowDark().MakePopout();
         yield return new WaitForSeconds(5.0f);
         
@@ -82,8 +83,10 @@ public class IntroCutscene : MonoBehaviour {
         loveInterestCam.gameObject.SetActive(true);
         
         yield return new WaitForSeconds(1.0f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Ugh! I've been here for hours!", loveInterest, 2.0f).ShowDark().MakePopout();
         yield return new WaitForSeconds(2.5f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Usually it doesn't take this long...", loveInterest, 2.0f).ShowDark().MakePopout();
         yield return new WaitForSeconds(2.0f);
         
@@ -93,14 +96,19 @@ public class IntroCutscene : MonoBehaviour {
         player.enabled = true;
         player.MoveToLocation(playerWalkUpPosition.position, 1.5f);
         yield return new WaitForSeconds(1.5f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Oh wait! Who's that!?", loveInterest, 2.0f).ShowDark();
         yield return new WaitForSeconds(2.0f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Hey cutie!", loveInterest, 2.0f).ShowDark();
         yield return new WaitForSeconds(3.0f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Dummy!", loveInterest, 1.5f).ShowDark();
         yield return new WaitForSeconds(1.75f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Yoohoo! Look over here.", loveInterest, 2.5f).ShowDark();
         yield return new WaitForSeconds(1.0f);
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("!!!", player.transform, .6f).ShowDark().SetColor(Color.red);
         yield return new WaitForSeconds(.75f);
         
@@ -109,34 +117,49 @@ public class IntroCutscene : MonoBehaviour {
         closeUpCam.SetActive(true);
         
         yield return new WaitForSeconds(1.0f);
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("Aw, is that rose for me??", player.transform).ShowDark();;
         yield return new WaitForSeconds(2.9f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("No.", loveInterest, 1.0f).ShowDark();
         yield return new WaitForSeconds(1.5f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Not yet, at least.", loveInterest, 2.0f).ShowDark();
         yield return new WaitForSeconds(2.25f);
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("Pleeeas-", player.transform, 1.0f).ShowDark();
         yield return new WaitForSeconds(.75f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Shush.", loveInterest, 1.5f).ShowDark();
         yield return new WaitForSeconds(1.5f);
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("...", player.transform, 2.0f).ShowDark();
         yield return new WaitForSeconds(2.25f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("I don't like begging.", loveInterest, 2.5f).ShowDark();
         yield return new WaitForSeconds(3.5f);
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("Sorry. What can I do to win that rose and your heart?", player.transform, 4.0f).ShowDark();
         yield return new WaitForSeconds(4.5f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Hm...", loveInterest, 1.0f).ShowDark();
         yield return new WaitForSeconds(1.25f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("I'll tell you what", loveInterest, 2.0f).ShowDark();
         yield return new WaitForSeconds(2.5f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("This place is infested with evil creatures.", loveInterest, 2.5f).ShowDark();
         yield return new WaitForSeconds(2.5f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("If you're able to, \"take them out\", per se,", loveInterest, 3.0f).ShowDark();
         yield return new WaitForSeconds(3.5f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Maybe I'll do the same to you.", loveInterest, 3.0f).ShowDark();
         yield return new WaitForSeconds(3.25f);
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove(";)", loveInterest, 1.0f).ShowDark();
         yield return new WaitForSeconds(2.00f);
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("Say no more! I'm on it!", player.transform, 2.0f).ShowDark();
 
         yield return new WaitForSeconds(1.0f);

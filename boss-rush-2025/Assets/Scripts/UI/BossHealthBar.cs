@@ -24,6 +24,7 @@ public class BossHealthBar : MonoBehaviour {
     }
 
     public void Setup(Enemy e) {
+        Debug.Log("setting up");
         currentBoss = e;
         currentBoss.OnDie += EnemyDie;
         currentBoss.OnChangeHealth += OnHealthChangeHandler;
@@ -46,6 +47,8 @@ public class BossHealthBar : MonoBehaviour {
     private void OnHealthChangeHandler(float delta, float newHealth) {
         UpdateHeath(newHealth, true);
         if (delta < 0) {
+            Debug.Log("Shaking");
+            HealthBarParent.anchoredPosition = new Vector2(0, -75);
             HealthBarParent.DOShakeAnchorPos(.2f, 30, 40);
         }
     }

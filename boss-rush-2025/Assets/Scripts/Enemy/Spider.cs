@@ -183,7 +183,8 @@ public class Spider : Enemy {
         yield return new WaitForSeconds(.35f);
         TextPopups.Instance.Get().PopupAbove("!", transform, .25f).SetColor(Color.red).SetSize(4.0f);
         Sound.I.PlaySpiderAttack();
-        yield return new WaitForSeconds(.15f);
+        float wait = GameManager.IsEasyMode ? .25f : .15f;
+        yield return new WaitForSeconds(wait);
         BodyParent.DOLocalMove(BodyAttack.localPosition, .1f).SetEase(Ease.InQuad).OnComplete(() => {
             SingleDamageInstance.SingleSwipe();
             BodyParent.DOLocalMove(Vector3.zero, .1f);
@@ -197,6 +198,9 @@ public class Spider : Enemy {
         exitBlocker.SetActive(false);
 
         GameManager.SpiderDefeated = true;
+        
+        StopAllCoroutines();
+        BodyParent.DOKill();
 
         foreach (var littlespider in smallSpiders) {
             Destroy(littlespider.gameObject);
@@ -239,7 +243,8 @@ public class Spider : Enemy {
         Vector3 towardsSpider = (transform.position - playerPos).normalized;
         targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
         Sound.I.PlaySpiderAttack();
-        yield return new WaitForSeconds(.2f);
+        float wait = GameManager.IsEasyMode ? .3f : .2f;
+        yield return new WaitForSeconds(wait);
         Sound.I.PlaySpiderWalk();
         DamageInstance.SingleSwipe();
         
@@ -255,7 +260,7 @@ public class Spider : Enemy {
         towardsSpider = (transform.position - playerPos).normalized;
         targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
         Sound.I.PlaySpiderAttack();
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(wait);
         
         DamageInstance.SingleSwipe();
         
@@ -269,7 +274,7 @@ public class Spider : Enemy {
         towardsSpider = (transform.position - playerPos).normalized;
         targetPosition = towardsSpider * (minSpiderDistance * .5f) + playerPos;
         Sound.I.PlaySpiderAttack();
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(wait);
         
         DamageInstance.SingleSwipe();
         

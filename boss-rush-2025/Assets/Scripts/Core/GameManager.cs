@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour {
     public static bool BlobDefeated;
 
     public static string lastBossKilled;
+    
+    public static string lastBossFought;
+    public static bool killedBoss;
 
     public static bool IsEasyMode;
     public static bool AimTowardsMouse = true;

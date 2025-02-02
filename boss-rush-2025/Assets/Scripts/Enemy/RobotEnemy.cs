@@ -87,6 +87,7 @@ public class RobotEnemy : Enemy {
 
             if (spinAttacking) {
                 float factor = CurrentHealth / maxHealth > .5f ? 1.0f : 1.3f;
+                factor *= GameManager.IsEasyMode ? .7f : 1.0f;
                 spinParent.Rotate(new Vector3(0, factor * spinAttackRotateSpeed * Time.deltaTime, 0));
             }
 
@@ -254,7 +255,8 @@ public class RobotEnemy : Enemy {
 
         
         float d = .25f;
-        yield return new WaitForSeconds(laserDelay - d);
+        float f = laserDelay - d + (GameManager.IsEasyMode ? .25f : 0.0f);
+        yield return new WaitForSeconds(f);
         TextPopups.Instance.Get().PopupAbove("!", transform, .25f).SetColor(Color.red).SetSize(4.0f);
         yield return new WaitForSeconds(d);
         

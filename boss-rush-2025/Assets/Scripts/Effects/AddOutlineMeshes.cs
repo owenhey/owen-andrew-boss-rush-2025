@@ -43,6 +43,12 @@ public class AddOutlineMeshes : MonoBehaviour {
             if (newRenderer.TryGetComponent(out Collider c)) {
                 Destroy(c);
             }
+            if (newRenderer.TryGetComponent(out Rigidbody rb)) {
+                Destroy(rb);
+            }
+            if (newRenderer.TryGetComponent(out RagdollHelper rh)) {
+                Destroy(rh);
+            }
             if (newRenderer.TryGetComponent(out RotateNearby rn)) {
                 Destroy(rn);
             }

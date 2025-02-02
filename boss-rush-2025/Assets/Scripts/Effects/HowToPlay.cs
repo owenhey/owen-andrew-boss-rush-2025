@@ -43,8 +43,6 @@ public class HowToPlay : MonoBehaviour {
             lastMove = player.transform.position;
             
             totalDistance += d.magnitude;
-            
-            Debug.Log(totalDistance);
         }
     }
 
@@ -101,7 +99,6 @@ public class HowToPlay : MonoBehaviour {
     }
 
     private bool MovedFarEnough() {
-        Debug.Log(totalDistance);
         return totalDistance > 15.0f;
     }
     

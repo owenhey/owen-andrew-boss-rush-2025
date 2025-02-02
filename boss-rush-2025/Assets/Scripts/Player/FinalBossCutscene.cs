@@ -67,44 +67,44 @@ public class FinalBossCutscene : MonoBehaviour {
         player.MoveToLocation(playerPos.position, 2.5f);
         player.enabled = true;
         yield return new WaitForSeconds(2.25f);
-        
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("So, I'll be taking that rose now.", player.transform, 3.0f).ShowDark();
         yield return new WaitForSeconds(3.5f);
-        
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("And that date you promised.", player.transform, 3.0f).ShowDark();
         yield return new WaitForSeconds(3.5f);
-        
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Really?", loveInterest.transform, 1.25f).ShowDark();
         yield return new WaitForSeconds(1.25f);
-        
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("Hm?", player.transform, 1.0f).ShowDark();
         yield return new WaitForSeconds(1.5f);
-        
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("After killing all those kind creatures", loveInterest.transform, 3f).ShowDark();
         yield return new WaitForSeconds(3.25f);
-        
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("You still can't figure it out?", loveInterest.transform, 3f).ShowDark();
         yield return new WaitForSeconds(3.25f);
-        
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("What do you mean!?", player.transform, 2.5f).ShowDark();
         yield return new WaitForSeconds(3f);
         Music.I.PlayFinalBossTheme(0);
         playedMusic = true;
         
         heartPS.Stop();
-        
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("You fell for the oldest trick in the book!", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
-        
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("Now this land is mine for the taking!", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
-        
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("I can seize my rightful place as ruler.", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
-        
+        Sound.I.PlayLoveInterestVoice();
         TextPopups.Instance.Get().PopupAbove("There's just one PEST left to get rid of...", loveInterest.transform, 3.5f).ShowDark();
         yield return new WaitForSeconds(4f);
-        
+        Sound.I.PlayPlayerVoice();
         TextPopups.Instance.Get().PopupAbove("Eek!", player.transform, 1f).ShowDark();
         player.MoveToLocation(playerRunaway.position, .5f);
         yield return new WaitForSeconds(.5f);
@@ -118,9 +118,10 @@ public class FinalBossCutscene : MonoBehaviour {
         closeUpCam.SetActive(false);
         skipCanvas.gameObject.SetActive(false);
         mm.GoToGame();
+        
+        gameObject.SetActive(false);
 
         neutralLoveInterest.gameObject.SetActive(false);
         realLoveInterest.gameObject.SetActive(true);
-        realLoveInterest.ShowHealthBar();
     }
 }

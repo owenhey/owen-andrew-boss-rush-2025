@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class Pause : MonoBehaviour {
     public InputActionReference openPause;
+    public InputActionReference closePause;
 
     public GameObject canvas;
     
@@ -18,11 +19,17 @@ public class Pause : MonoBehaviour {
     
     private void Awake() {
         openPause.action.performed += OpenPause;
+        closePause.action.performed += Close;
         canvas.SetActive(false);
     }
 
     private void OnDestroy() {
         openPause.action.performed -= OpenPause;
+        closePause.action.performed -= Close;
+    }
+
+    public void Close(InputAction.CallbackContext obj) {
+        Resume();
     }
 
     public void OpenPause(InputAction.CallbackContext obj) {

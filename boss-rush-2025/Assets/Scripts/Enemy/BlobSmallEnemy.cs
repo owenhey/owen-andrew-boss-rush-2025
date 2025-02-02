@@ -89,9 +89,11 @@ public class BlobSmallEnemy : Enemy {
         blobAttackIndicator.transform.position = randomSpot;
         blobAttackIndicator.gameObject.SetActive(true);
 
-        transform.DOJump(randomSpot, jumpHeight, 1, jumpTime).SetEase(Ease.Linear);
+        float jt = this.jumpTime * (GameManager.IsEasyMode ? 1.25f : 1.0f);
+
+        transform.DOJump(randomSpot, jumpHeight, 1, jt).SetEase(Ease.Linear);
         
-        yield return new WaitForSeconds(jumpTime);
+        yield return new WaitForSeconds(jt);
         
         blobAttackIndicator.gameObject.SetActive(false);
         knockbackFactorCode = 1;

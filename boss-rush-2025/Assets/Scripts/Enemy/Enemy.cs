@@ -122,6 +122,9 @@ public class Enemy : MonoBehaviour, IDamagable {
     public virtual void TakeDamage(float damage, Transform source, bool force = false) {
         if(!force)
             if (!canBeDamaged) return;
+
+        GameManager.lastBossFought = EnemyName;
+        GameManager.killedBoss = true;
         
         Vector3 direction = cc.transform.position - source.position;
         direction.y = 0;
@@ -157,6 +160,7 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, -1, maxHealth);
+        Debug.Log("damaing");
         OnChangeHealth?.Invoke(-damage, currentHealth);
         if (currentHealth <= 0) {
             Die();
@@ -180,7 +184,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                     var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
                     float wait = Random.Range(.5f, 1.0f);
                     TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, wait).MakePopout();
-
+                    Sound.I.PlayPlayerVoice(wait);
                     possiblePlayerDuringCombatLines.Remove(randomString);
                 }
             }
@@ -202,7 +206,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                     var randomString = possiblePlayerDuringCombatLines[Random.Range(0, possiblePlayerDuringCombatLines.Count)];
                     float wait = Random.Range(.5f, 1.0f);
                     TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 2.5f, wait).MakePopout();
-
+                    Sound.I.PlayPlayerVoice(wait);
                     possiblePlayerDuringCombatLines.Remove(randomString);
                 }
             }
@@ -236,7 +240,7 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         OnDie?.Invoke();
 
-        if (useBossHealthBar) {
+        if (useBossHealthBar && bossDeathRoutine) {
             bossDeathRoutine.BossKillRoutine(EnemyName);
             GameManager.lastBossKilled = EnemyName;
         }
@@ -270,6 +274,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     public virtual void HandlePlayerFirstAttack() {
         if (possiblePlayerStartCombatMessages == null || possiblePlayerStartCombatMessages.Count == 0) return;
 
+        Sound.I.PlayPlayerVoice();
         var randomString = possiblePlayerStartCombatMessages[Random.Range(0, possiblePlayerStartCombatMessages.Count)];
         TextPopups.Instance.Get().PopupAbove(randomString, player.transform, 1.5f);
     }

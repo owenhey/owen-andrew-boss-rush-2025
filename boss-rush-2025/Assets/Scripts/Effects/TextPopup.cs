@@ -62,7 +62,7 @@ public class TextPopup : MonoBehaviour {
             XSize = textCount * 3;
         }
 
-        darkBG.transform.localScale = new Vector3(XSize, Text.rectTransform.sizeDelta.y * 10, 1);
+        darkBG.transform.localScale = new Vector3(XSize, Text.rectTransform.sizeDelta.y * 12, 1);
     }
 
     private bool animating = false;

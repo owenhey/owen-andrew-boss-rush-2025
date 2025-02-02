@@ -67,7 +67,7 @@ public class RockBehavior : MonoBehaviour {
         TextPopups.Instance.Get().PopupAbove(text, transform, 1.5f, .5f);
         
         text = DetectInputMode.IsController
-            ? "(Button South) to release!"
+            ? "(Button East) to release!"
             : "Space to release!";
         TextPopups.Instance.Get().PopupAbove(text, transform, 2.0f, 2f);
     }
@@ -115,7 +115,7 @@ public class RockBehavior : MonoBehaviour {
         
         movingRock = false;
         
-        damage.damage = Mathf.Lerp(50, 100, Mathf.Abs(rotationAmount) / maxRotSpeed);
+        damage.damage = Mathf.Lerp(75, 150, Mathf.Abs(rotationAmount) / maxRotSpeed);
 
         Vector3 cross = Vector3.Cross(Vector3.up, vectorAwayFromPlayer);
         cross.Normalize();

@@ -78,6 +78,9 @@ public class BlobEnemy : Enemy {
 
                 SpawnBlob();
                 nextBlobSpawn = Time.time + ((CurrentHealth / maxHealth) > .5f ? blobSpawnRate : .66f * blobSpawnRate);
+                if (GameManager.IsEasyMode) {
+                    nextBlobSpawn += 2;
+                }
             }
 
             if (Time.time > nextSearchForBlobsInTheWay) {

@@ -36,6 +36,8 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
         if (GameManager.IsEasyMode) {
             damage *= .7f;
         }
+
+        Sound.I.PlayPlayerHurt();
         
         movement.Knockback(source);
 
@@ -56,6 +58,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable {
         if (dead) return;
         Sound.I.PlayDeath();
         dead = true;
+        GameManager.killedBoss = false;
         OnDie?.Invoke();
         movement.BlowUp(direction.normalized);
     }

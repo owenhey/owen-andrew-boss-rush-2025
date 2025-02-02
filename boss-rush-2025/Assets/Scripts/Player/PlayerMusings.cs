@@ -11,6 +11,7 @@ public class PlayerMusings : MonoBehaviour {
         if (other.gameObject.layer is 7 or 8) {
             var randomSTring = strings[Random.Range(0, strings.Count)];
             TextPopups.Instance.Get().PopupAbove(randomSTring, other.transform, 2.5f).MakePopout();
+            Sound.I.PlayPlayerVoice();
             Destroy(gameObject);
         }
     }

@@ -168,7 +168,8 @@ public class Movement : MonoBehaviour {
         rollTarget = playerPos + direction * rollDistance;
         rollStart = playerPos;
         rollStartTime = Time.time;
-        rollEndTime = Time.time + rollTime;
+        rollEndTime = Time.time + (GameManager.IsEasyMode ? rollTime * 1.2f : rollTime);
+        
         nextRollAllowed = Time.time + rollTime + rollCooldown;
 
         targetPositionTrans.position = rollTarget + direction;
@@ -279,7 +280,7 @@ public class Movement : MonoBehaviour {
             return;
         }
 
-        float t = (Time.time - rollStartTime) / rollTime;
+        float t = (Time.time - rollStartTime) / (GameManager.IsEasyMode ? rollTime * 1.2f : rollTime);
         t = 1 - Mathf.Pow(1 - (.5f * t), 3);
         t *= 1.144f;
 

@@ -56,6 +56,8 @@ public class LoveInterest : Enemy {
 
     public WinGameCutscene winGame;
     
+    private RagdollHelper[] _ragdollHelpers;
+    
     protected override void OnAwake() {
         NextAttackTime = Time.time + 2.0f;
         
@@ -70,6 +72,11 @@ public class LoveInterest : Enemy {
         
         foreach (var rockEnemy in rocks) {
             rockEnemy.gameObject.SetActive(false);
+        }
+        
+        _ragdollHelpers = GetComponentsInChildren<RagdollHelper>(true);
+        foreach (var ragdoll in _ragdollHelpers) {
+            ragdoll.Disable();
         }
     }
 
@@ -124,7 +131,8 @@ public class LoveInterest : Enemy {
                     swing12attack.gameObject.SetActive(false);
                     
                     ikTarget.DOLocalMove(attack2Rest.localPosition, .4f).SetEase(Ease.OutCubic).OnComplete(() => {
-                        ikTarget.DOLocalMove(attack2Start.localPosition, .15f).OnComplete(() => {
+                        float s = GameManager.IsEasyMode ? .25f : .15f;
+                        ikTarget.DOLocalMove(attack2Start.localPosition, s).OnComplete(() => {
                             swingStart = Time.time;
                             swingEnd = Time.time + attackDuration;
                             swingPhase = 3;
@@ -145,7 +153,8 @@ public class LoveInterest : Enemy {
                     swingPhase = 4;
                     swing12attack.gameObject.SetActive(false);
                     
-                    ikTarget.DOLocalMove(swing3extend.localPosition, .1f).OnStart(()=> {
+                    float s = GameManager.IsEasyMode ? .2f : .1f;
+                    ikTarget.DOLocalMove(swing3extend.localPosition, s).OnStart(()=> {
                         var v = JumpTowardsPlayerPos();
                         if ((v - transform.position).magnitude > 1.5f) {
                             JumpToPos(v);
@@ -237,8 +246,11 @@ public class LoveInterest : Enemy {
         ikTarget.DOLocalMove(centerAimHigh.localPosition, .5f).SetDelay(.75f);
         knockbackFactorCode = 0;
 
-        float healAmount = 250;
-        float duration = 20;
+        float healAmount = 350;
+        float duration = 21.5f;
+        if (GameManager.IsEasyMode) {
+            duration = 25;
+        }
 
         yield return new WaitForSeconds(1.25f);
         PS.gameObject.SetActive(true);
@@ -265,9 +277,7 @@ public class LoveInterest : Enemy {
 
         yield return new WaitForSeconds(.25f);
         SpawnSpinner();
-        yield return new WaitForSeconds(.25f);
-        SpawnSpinner();
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSeconds(.4f);
         SpawnSpinner();
         lotsOfSpinners = true;
         
@@ -285,6 +295,11 @@ public class LoveInterest : Enemy {
         
         winGame.gameObject.SetActive(true);
         winGame.Play();
+        
+        foreach (var ragdoll in _ragdollHelpers) {
+            ragdoll.Enable();
+            ragdoll.Push(damageTowards);
+        }
     }
 
     private bool lotsOfSpinners = false;
@@ -301,6 +316,9 @@ public class LoveInterest : Enemy {
         }
 
         nextSpinSpawn = Time.time +  10.0f * (lotsOfSpinners ? .65f : 1.0f);
+        if (GameManager.IsEasyMode) {
+            nextSpinSpawn += 2;
+        }
 
         if (spawnedSpinners.Count > (lotsOfSpinners ? 4 : 2)) return;
 
@@ -311,7 +329,6 @@ public class LoveInterest : Enemy {
         
         
         while ((player.transform.position - position).magnitude < 3.5f) {
-            Debug.Log("Trying to find a new one.");
             position = spinSpawnCenter.position +
                        new Vector3(Random.Range(-5.0f, 5.0f), 0, Random.Range(-5.0f, 5.0f));
         }
@@ -365,12 +382,15 @@ public class LoveInterest : Enemy {
 
     private IEnumerator Swing() {
         NextAttackTime = Time.time + 5.0f;
+        if (GameManager.IsEasyMode) NextAttackTime += 1;
 
         yield return null;
 
         knockbackFactorCode = 0;
 
-        ikTarget.DOLocalMove(attackStart.localPosition, .25f).OnComplete(() => {
+        float s = GameManager.IsEasyMode ? .35f : .25f;
+        
+        ikTarget.DOLocalMove(attackStart.localPosition, s).OnComplete(() => {
             swingStart = Time.time;
             swingEnd = Time.time + attackDuration;
             swingPhase = 1;

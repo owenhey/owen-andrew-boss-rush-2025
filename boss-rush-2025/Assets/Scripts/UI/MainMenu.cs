@@ -20,6 +20,8 @@ public class MainMenu : MonoBehaviour {
     public Camera cam;
     public Material pixelMat;
 
+    public LoveInterestNeutral lin;
+    
     public Transform mainMenuLoc;
     public Transform gameLoc;
 
@@ -53,11 +55,12 @@ public class MainMenu : MonoBehaviour {
         GameManager.instance.EnableRock();
         
         bool killedAllBosses = GameManager.BlobDefeated && GameManager.RobotDefeated && GameManager.SpiderDefeated;
-        killedAllBosses = true;
         if (WentPastCutscene && !killedAllBosses) {
             GameManager.instance.EnableUI();
             GameManager.instance.EnableCutscene();
             GameManager.instance.EnableGameplay();
+
+            lin.RespondToRespawn();
             
             movement.playerCC.enabled = false;
             movement.transform.SetPositionAndRotation(gameLoc.position, gameLoc.rotation);
@@ -74,6 +77,8 @@ public class MainMenu : MonoBehaviour {
             gameCanvas.SetActive(true);
             movement.enabled = true;
             mainMenuCam.SetActive(false);
+            
+            
         }
         else {
             pixelMat.SetFloat("_mindistance", 150);

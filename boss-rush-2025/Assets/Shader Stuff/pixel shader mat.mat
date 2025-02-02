@@ -42,7 +42,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Float: -9.79
-    - _Pixelation: 350
+    - _Pixelation: 1920
     - _Sobel_Cutoff: 0.001
     - _Sobel_Distance: 0.1
     - _maxdistance: 6
